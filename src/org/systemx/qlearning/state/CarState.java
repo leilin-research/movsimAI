@@ -5,7 +5,13 @@ public class CarState {
 	public int position; // -100 100
 	public int speed; // 0 20
 	
-	
+	public CarState() {
+		super();
+		this.lane = 0;
+		this.position = 0;
+		this.speed = 0;
+	}
+
 	public CarState(CarState carState) {
 		super();
 		this.lane = carState.lane;

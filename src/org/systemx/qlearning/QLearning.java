@@ -11,18 +11,18 @@ import org.systemx.qlearning.commun.Action;
 import org.systemx.qlearning.state.State;
 import org.systemx.qlearning.state.StatesList;
 
-public class QLearning2 {
+public class QLearning {
 
 	private final double alpha = 0.1; // Learning rate
 	private final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 	
+	private final StatesList statesList;
 	
-	private final int numberOfLanes = 2; 
-	private final int speedLimit = 20; 
-	
-	private final StatesList statesList = new StatesList();
-	
-	
+	public QLearning(int numberOfLanes, int speedLimit) {
+		super();
+		statesList = new StatesList(numberOfLanes, speedLimit);
+		// TODO Auto-generated constructor stub
+	}
 	State getCurrentState(){
 		return new State();
 	}
@@ -38,19 +38,14 @@ public class QLearning2 {
 		return 0;
 	}
 
+	
 	void calculateQ() {
 		Random rand = new Random();
 		
 		State currentState = getCurrentState();
 		statesList.addState(currentState);
 		while (!isFinalState()) {
-			
-			List<Action> actionsFromCurrentState = currentState.getPossibleActions(numberOfLanes, speedLimit);
-			
-			// Pick a random action from the ones possible
-			int randIndex = rand.nextInt(actionsFromCurrentState.size());
-			Action nextAction = actionsFromCurrentState.get(randIndex);
-
+			Action nextAction = statesList.predictNextAction(currentState);
 			State nextState = statesList.getNextState(currentState, nextAction);
 			
 			// Q(state,action)= Q(state,action) + alpha * (R(state,action) + gamma *
@@ -62,7 +57,6 @@ public class QLearning2 {
 
 			double value = q + alpha * (r + gamma * maxQ - q);
 			currentState.setQValue(nextAction, value);
-			
 			currentState = nextState;
 		}
 	}

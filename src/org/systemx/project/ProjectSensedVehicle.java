@@ -1,43 +1,44 @@
 package org.systemx.project;
-import java.awt.Color;
-
 import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
 
 public class ProjectSensedVehicle extends  SensedVehicle{
 
-	private Color senderColor;
 	private double senderPosition;
 	private int senderLane;
+	private double senderSpeed;
+	private double senderAcceleration;
+
+	public ProjectSensedVehicle(long senderId, double senderPosition, int senderLane,
+			double senderSpeed, double senderAcceleration) {
+		super(senderId);
+		this.senderPosition = senderPosition;
+		this.senderLane = senderLane;
+		this.senderSpeed = senderSpeed;
+		this.senderAcceleration = senderAcceleration;
+	}
 	
-	public Color getSenderColor() {
-		return senderColor;
+	public double getSenderAcceleration() {
+		return senderAcceleration;
 	}
 
 	public double getSenderPosition() {
 		return senderPosition;
 	}
 
-	@Override
-	public String toString() {
-		return "ProjectSensedVehicle [senderColor=" + senderColor
-				+ ", senderPosition=" + senderPosition + ", senderLane="
-				+ senderLane + "]";
-	}
-
 	public int getSenderLane() {
 		return senderLane;
 	}
-
-	public ProjectSensedVehicle(long senderId) {
-		super(senderId);
-	}
 	
-	public ProjectSensedVehicle(long senderId, Color senderColor, 
-			double senderPosition, int senderLane){
-		this(senderId);
-		this.senderColor = senderColor;
-		this.senderLane = senderLane;
-		this.senderPosition = senderPosition;
+	public double getSenderSpeed() {
+		return senderSpeed;
 	}
+
+	@Override
+	public String toString() {
+		return "ProjectSensedVehicle [senderPosition=" + senderPosition + ", senderLane=" + senderLane
+				+ ", senderSpeed=" + senderSpeed + ", senderAcceleration=" + senderAcceleration + "]";
+	}
+
+	
 	
 }

@@ -1,6 +1,6 @@
-package org.systemx.vehiclecontrol;
+package org.systemx.project.control;
 
-public class vehicleControl {
+public class VehicleControl {
 
     public static int acceleration;
     public static int laneChange;

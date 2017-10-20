@@ -44,6 +44,7 @@ import org.movsim.simulator.trafficlights.TrafficLightLocation;
 import org.movsim.simulator.vehicles.Vehicle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.systemx.project.ProjectVehicle;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -1401,6 +1402,12 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                                         j, veh.getFrontPosition(), veh.getSpeed(), veh.accModel(), veh.getAcc(),
                                         veh.getLength(), veh.lane(), veh.getId()));
                     }
+                    
+                    
+                    if(vehicle instanceof ProjectVehicle) {
+                    	((ProjectVehicle) vehicle).vehicleCrashed(vehicle.getId());
+                    }
+                    
                     LOG.error(sb.toString());
                     if (isWithCrashExit) {
                         //LOG.error(" !!! exit after crash !!! ");

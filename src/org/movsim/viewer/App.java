@@ -46,9 +46,9 @@ import org.movsim.viewer.ui.AppFrame;
 import org.movsim.viewer.ui.LogWindow;
 import org.movsim.viewer.ui.ViewProperties;
 import org.movsim.viewer.util.LocalizationStrings;
+import org.systemx.project.control.VehicleControl;
 import org.systemx.vehiclecontrol.mainDraw;
 import org.systemx.vehiclecontrol.mainFrame;
-import org.systemx.vehiclecontrol.vehicleControl;
 
 public class App {
 
@@ -61,7 +61,7 @@ public class App {
 
 		// joseph =========================
 		mainDraw draw = new mainDraw();
-		vehicleControl vc = new vehicleControl();
+		VehicleControl vc = new VehicleControl();
 
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

@@ -154,13 +154,12 @@ public class LaneChangeModel {
 
 	public LaneChangeDecision makeDecision(RoadSegment roadSegment) {
 		LaneChangeDecision decision = LaneChangeDecision.NONE;
-		
+
 		// joseph
 		decision = checkForManualLaneChange(roadSegment);
 		if (!decision.equals(LaneChangeDecision.STAY_IN_LANE)) {
 			return decision;
 		}
-
 
 		// check for mandatory lane changes to reach exit lane
 		decision = checkForMandatoryLaneChangeToExit(roadSegment);
@@ -178,7 +177,6 @@ public class LaneChangeModel {
 			return decision;
 		}
 
-
 		// check discretionary lane changes
 		decision = determineDiscretionaryLaneChangeDirection(roadSegment);
 
@@ -193,7 +191,7 @@ public class LaneChangeModel {
 		if (!decision.equals(LaneChangeDecision.STAY_IN_LANE)) {
 			return decision;
 		}
-		
+
 		/**
 		 * 
 		 */
@@ -548,19 +546,19 @@ public class LaneChangeModel {
 		LaneChangeDecision laneChangeDecision = LaneChangeDecision.NONE;
 		final int currentLane = me.lane();
 		if (me instanceof ProjectVehicle) {
-			laneChangeDecision = ((ProjectVehicle) me).getManualLaneCange();
+			laneChangeDecision = ((ProjectVehicle) me).getManualLaneChange();
+
 			if (currentLane == roadSegment.laneCount()
 					&& (laneChangeDecision.equals(LaneChangeDecision.DISCRETIONARY_TO_RIGHT)
 							|| laneChangeDecision.equals(LaneChangeDecision.MANDATORY_TO_RIGHT))) {
 				laneChangeDecision = LaneChangeDecision.NONE;
 			}
-			if (currentLane == 0
-					&& (laneChangeDecision.equals(LaneChangeDecision.DISCRETIONARY_TO_LEFT)
-							|| laneChangeDecision.equals(LaneChangeDecision.MANDATORY_TO_LEFT))) {
+			if (currentLane == 1 && (laneChangeDecision.equals(LaneChangeDecision.DISCRETIONARY_TO_LEFT)
+					|| laneChangeDecision.equals(LaneChangeDecision.MANDATORY_TO_LEFT))) {
 				laneChangeDecision = LaneChangeDecision.NONE;
 			}
-			
-			((ProjectVehicle) me).setManualLaneCange(LaneChangeDecision.NONE);
+
+			((ProjectVehicle) me).setManualLaneChange(LaneChangeDecision.NONE);
 		}
 		return laneChangeDecision;
 	}

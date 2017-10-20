@@ -10,6 +10,11 @@ public class QValues {
 	List<Action> actions = new ArrayList<Action>();
 	List<Double> qList = new ArrayList<Double>();
 
+	public QValues() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public QValues(QValues qValues) {
 		super();
 		for (int i = 0; i < qValues.actions.size(); i++) {

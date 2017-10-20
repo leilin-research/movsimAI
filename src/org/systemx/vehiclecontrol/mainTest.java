@@ -4,12 +4,14 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-public class main {
+import org.systemx.project.control.VehicleControl;
+
+public class mainTest {
 
 	public static void main(String[] args) {
 
 		mainDraw draw = new mainDraw();
-		vehicleControl vc = new vehicleControl();
+		VehicleControl vc = new VehicleControl();
 
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

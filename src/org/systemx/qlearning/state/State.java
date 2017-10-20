@@ -8,14 +8,20 @@ import org.systemx.qlearning.commun.QValues;
 
 public class State {
 
-	public QValues qValues;
+	private QValues qValues;
 
-	public CarState myCar;
-	public List<CarState> AdjacentCars = new ArrayList<CarState>();
+	private CarState myCar;
+
+	private List<CarState> AdjacentCars;
 	
-	public List<Integer> relatedStates = new ArrayList<Integer>();
+	private List<Integer> relatedStates;
 
 	public State(State state) {
+		qValues = new QValues();
+		myCar = new CarState();
+		AdjacentCars = new ArrayList<CarState>();
+		relatedStates = new ArrayList<Integer>();
+		
 		this.qValues = new QValues(state.qValues);
 		this.myCar = new CarState(state.myCar);
 
@@ -25,7 +31,43 @@ public class State {
 	}
 
 	public State() {
-		// TODO Auto-generated constructor stub
+		qValues = new QValues();
+		myCar = new CarState();
+		AdjacentCars = new ArrayList<CarState>();
+		relatedStates = new ArrayList<Integer>();
+	}
+	
+
+	public QValues getqValues() {
+		return qValues;
+	}
+
+	public void setqValues(QValues qValues) {
+		this.qValues = qValues;
+	}
+
+	public CarState getMyCar() {
+		return myCar;
+	}
+
+	public void setMyCar(CarState myCar) {
+		this.myCar = myCar;
+	}
+
+	public List<CarState> getAdjacentCars() {
+		return AdjacentCars;
+	}
+
+	public void setAdjacentCars(List<CarState> adjacentCars) {
+		AdjacentCars = adjacentCars;
+	}
+
+	public List<Integer> getRelatedStates() {
+		return relatedStates;
+	}
+
+	public void setRelatedStates(List<Integer> relatedStates) {
+		this.relatedStates = relatedStates;
 	}
 
 	public double getQValue(Action action) {

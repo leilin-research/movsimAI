@@ -5,9 +5,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 
+import org.systemx.project.control.VehicleControl;
+
 public class mainFrame extends JFrame implements KeyListener {
 	private mainDraw draw;
-	private vehicleControl vc;
+	private VehicleControl vc;
 
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -26,14 +28,14 @@ public class mainFrame extends JFrame implements KeyListener {
 	}
 
 	public void keyReleased(KeyEvent e) {
-
+		draw.clear();
 	}
 
 	public void keyTyped(KeyEvent e) {
 
 	}
 
-	public mainFrame(mainDraw draw, vehicleControl vc) {
+	public mainFrame(mainDraw draw, VehicleControl vc) {
 		this.draw = draw;
 		this.vc = vc;
 		addKeyListener(this);
@@ -44,8 +46,8 @@ public class mainFrame extends JFrame implements KeyListener {
 	public void run() {
 		this.setTitle("Square Move Practice");
 		this.setResizable(false);
-		this.setSize(600, 600);
-		this.setMinimumSize(new Dimension(600, 600));
+		this.setSize(150, 130);
+		this.setMinimumSize(new Dimension(150,130));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.getContentPane().add(this.draw);
 		this.pack();

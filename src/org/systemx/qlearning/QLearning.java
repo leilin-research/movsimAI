@@ -23,13 +23,22 @@ public class QLearning {
 
 	private static State currentState;
 	private static Action currentAction;
-
-	static void init(State realCurrentState) {
+	
+	private static boolean Initialized = false;
+	
+	static Action init(State realCurrentState) {
 		currentState = realCurrentState;
 		statesList.addState(currentState);
+		currentAction = statesList.predictNextAction(currentState);
+		return currentAction;
 	}
 
 	static Action realTimeCalculateQ(State realNextState, double reward) {
+		if(!Initialized) {
+			Initialized = true;
+			return init(realNextState);
+		}
+		
 		State nextState = statesList.setNextState(currentState, realNextState);
 		double q = currentState.getQValue(currentAction);
 

@@ -9,11 +9,8 @@ import org.systemx.qlearning.commun.QValues;
 public class State {
 
 	private QValues qValues;
-
 	private CarState myCar;
-
 	private List<CarState> AdjacentCars;
-	
 	private List<Integer> relatedStates;
 
 	public State(State state) {
@@ -103,29 +100,6 @@ public class State {
 		}
 		return actions;
 	}
-
-//	State getNextState(Action action) {
-//		State nextState = this;
-//		switch (action) {
-//		case goRight:
-//			nextState.myCar.lane++;
-//			break;
-//		case goLeft:
-//			nextState.myCar.lane--;
-//			break;
-//		case incSpeed:
-//			nextState.myCar.speed++;
-//			break;
-//		case decSpeed:
-//			nextState.myCar.speed--;
-//			break;
-//		case noAction:
-//			break;
-//		default:
-//			break;
-//		}
-//		return nextState;
-//	}
 
 	boolean matchesState(State state) {
 		if(myCar.matchesCarState(state.myCar)) {

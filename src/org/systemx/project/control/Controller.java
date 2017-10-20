@@ -38,11 +38,11 @@ public class Controller {
 	public void controlDecision(ProjectVehicle vehicle) {
 		if (vcid == vehicle.getId()) {
 
-			System.out.println(vehicle.getId() + " ====================================");
-			List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
-			for (int i = 0; i < ids.size(); i++) {
-				System.out.println(vehicle.getCommunicatingVehicles().get(ids.get(i)));
-			}
+//			System.out.println(vehicle.getId() + " ====================================");
+//			List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
+//			for (int i = 0; i < ids.size(); i++) {
+//				System.out.println(vehicle.getCommunicatingVehicles().get(ids.get(i)));
+//			}
 
 			vehicle.getCommunicatingVehicles().clear();
 			
@@ -54,7 +54,7 @@ public class Controller {
 			vehicle.setColorObject(Color.red);
 
 			if (vc.acceleration == 1) {
-				if (vehicle.getSpeed() < 13) {
+				if (vehicle.getSpeed() < 20) {
 					vehicle.modifyDesiredSpeed(-Double.MAX_VALUE);
 					System.out.println("Speed: " + vehicle.getSpeed());
 				} else {
@@ -62,8 +62,10 @@ public class Controller {
 				}
 				vc.acceleration = 0;
 			} else if (vc.acceleration == -1) {
-				vehicle.modifyDesiredSpeed(0.000000001);
-				System.out.println("Speed: " + vehicle.getSpeed());
+				if(vehicle.getSpeed() >0) {
+					vehicle.modifyDesiredSpeed(0.000000001);
+					System.out.println("Speed: " + vehicle.getSpeed());
+				}
 				vc.acceleration = 0;
 			} else {
 				vehicle.modifyDesiredSpeed(0);

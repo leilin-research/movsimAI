@@ -1378,6 +1378,12 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                 final Vehicle vehFront = laneSegment.frontVehicle(vehicle);
                 final double netDistance = vehicle.getNetDistance(vehFront);
                 if (netDistance < 0) {
+                    
+                    if(vehicle instanceof ProjectVehicle) {
+                    	((ProjectVehicle) vehicle).vehicleCrashed(vehicle.getId());
+                        continue;
+                    }
+
                     LOG.error("Crash happened!!!");
                     final StringBuilder sb = new StringBuilder("\n");
                     sb.append(String.format("Crash of Vehicle i=%d (id=%d) at x=%.4f ", index, vehicle.getId(),
@@ -1403,12 +1409,7 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                                         veh.getLength(), veh.lane(), veh.getId()));
                     }
                     
-                    
-                    if(vehicle instanceof ProjectVehicle) {
-                    	((ProjectVehicle) vehicle).vehicleCrashed(vehicle.getId());
-                    }
-                    
-                    LOG.error(sb.toString());
+                   // LOG.error(sb.toString());
                     if (isWithCrashExit) {
                         //LOG.error(" !!! exit after crash !!! ");
                     	LOG.error(" !!!crash !!! ");

@@ -1,4 +1,4 @@
-package org.systemx.vehiclecontrol;
+package org.systemx.project.vehiclecontrol;
 
 import java.awt.Color;
 import java.awt.Graphics;

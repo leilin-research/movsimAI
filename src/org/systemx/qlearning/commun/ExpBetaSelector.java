@@ -24,7 +24,7 @@ public class ExpBetaSelector {
 	}
 	
 	private Map<Action, Double> calcWeights(State state, List<Action> possibleActions) {
-		double maxQ = state.getMaxQValue();
+		double maxQ = state.getMaxQValue(possibleActions);
 
 		Map<Action, Double> weights = new HashMap<Action, Double>();
 

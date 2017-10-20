@@ -33,18 +33,19 @@ public class QValues {
 		}
 	}
 
-	public double getMaxValue() {
-		if (qList.size() > 0) {
-			return Collections.max(qList);
-		} else {
-			return 0;
+	public double getMaxValue(List<Action> possibleActions) {
+		double maxValue=Double.MIN_VALUE;
+		for (Action possibleAction: possibleActions) {
+			if(actions.contains(possibleAction)) {
+				double tempValue = qList.get(actions.indexOf(possibleAction));
+				if( tempValue > maxValue) {
+					maxValue = tempValue; 
+				}
+			}
 		}
-	}
-
-	public double getMinValue() {
-		if (qList.size() > 0) {
-			return Collections.min(qList);
-		} else {
+		if(possibleActions.size()>0) {
+			return maxValue;
+		}else {
 			return 0;
 		}
 	}

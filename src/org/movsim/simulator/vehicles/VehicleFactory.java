@@ -89,7 +89,7 @@ public final class VehicleFactory {
         vehicle.addSensors(prototype.getSensors());
 
         /**
-         * @author Maxime Guériau
+         * @author Maxime Guï¿½riau
          *
          * Register the vehicle to external control server (if needed)
          */
@@ -100,7 +100,7 @@ public final class VehicleFactory {
          }
         /**
          * 
-         */
+         */         
         return vehicle;
     }
 

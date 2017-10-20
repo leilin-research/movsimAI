@@ -114,12 +114,15 @@ public class TrafficSourceMacro extends AbstractTrafficSource {
     private boolean tryEnteringNewVehicle(TestVehicle testVehicle, LaneSegment laneSegment, double time, double qBC) {
 
         final Vehicle leader = laneSegment.rearVehicle();
-
+        
         // (1) empty road
-        if (leader == null) {
+        if (leader == null || Double.isNaN(leader.getSpeed())) {
             enterVehicleOnEmptyRoad(laneSegment, time, testVehicle);
             return true;
         }
+        //joseph
+        //System.out.println("Lane:" + laneSegment.lane() + " leader:" + leader.getId() + " leaderV:" + leader.getSpeed());
+        
         // (2) check if gap to leader is sufficiently large origin of road section is assumed to be zero
         final double netGapToLeader = leader.getRearPosition(); 
         final double gapAtQMax = 1. / testVehicle.getRhoQMax();

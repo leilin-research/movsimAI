@@ -1,7 +1,7 @@
 package org.systemx.qlearning.state;
 
 public class CarState {
-	public int lane; // 1  2
+	public double lane; // 1 - 1.5 - 2 - 2.5 - 3
 	public int position; // -100 100
 	public int speed; // 0 20
 	

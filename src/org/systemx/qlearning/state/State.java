@@ -74,8 +74,8 @@ public class State {
 		return qValues.getValue(action);
 	}
 
-	public double getMaxQValue() {
-		return qValues.getMaxValue();
+	public double getMaxQValue(List<Action> possibleActions) {
+		return qValues.getMaxValue(possibleActions);
 	}
 
 	public void setQValue(Action action, double q) {
@@ -86,11 +86,11 @@ public class State {
 		List<Action> actions = new ArrayList<>();
 		actions.add(Action.noAction);
 
-		if (myCar.lane != 0) {
+		if (myCar.lane != 0 && myCar.lane%1 == 0) {
 			actions.add(Action.goLeft);
 		}
 
-		if (myCar.lane < numberOfLanes) {
+		if (myCar.lane < numberOfLanes && myCar.lane%1 == 0) {
 			actions.add(Action.goRight);
 		}
 
@@ -104,28 +104,28 @@ public class State {
 		return actions;
 	}
 
-	State getNextState(Action action) {
-		State nextState = this;
-		switch (action) {
-		case goRight:
-			nextState.myCar.lane++;
-			break;
-		case goLeft:
-			nextState.myCar.lane--;
-			break;
-		case incSpeed:
-			nextState.myCar.speed++;
-			break;
-		case decSpeed:
-			nextState.myCar.speed--;
-			break;
-		case noAction:
-			break;
-		default:
-			break;
-		}
-		return nextState;
-	}
+//	State getNextState(Action action) {
+//		State nextState = this;
+//		switch (action) {
+//		case goRight:
+//			nextState.myCar.lane++;
+//			break;
+//		case goLeft:
+//			nextState.myCar.lane--;
+//			break;
+//		case incSpeed:
+//			nextState.myCar.speed++;
+//			break;
+//		case decSpeed:
+//			nextState.myCar.speed--;
+//			break;
+//		case noAction:
+//			break;
+//		default:
+//			break;
+//		}
+//		return nextState;
+//	}
 
 	boolean matchesState(State state) {
 		if(myCar.matchesCarState(state.myCar)) {

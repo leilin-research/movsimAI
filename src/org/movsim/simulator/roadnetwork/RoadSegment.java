@@ -1380,7 +1380,8 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                 if (netDistance < 0) {
                     
                     if(vehicle instanceof ProjectVehicle) {
-                    	((ProjectVehicle) vehicle).vehicleCrashed(vehicle.getId());
+                    	((ProjectVehicle) vehicle).vehicleCrashed();
+                    	vehicle.cheat(vehicle.getSpeed()/4, 0.0);
                         continue;
                     }
 

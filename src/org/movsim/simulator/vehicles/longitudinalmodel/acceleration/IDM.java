@@ -35,15 +35,17 @@ import org.slf4j.LoggerFactory;
  * The Class IDM.
  * 
  * <p>
- * Implementation of the 'intelligent driver model'(IDM). <a
- * href="http://en.wikipedia.org/wiki/Intelligent_Driver_Model">Wikipedia article IDM.</a>
+ * Implementation of the 'intelligent driver model'(IDM).
+ * <a href="http://en.wikipedia.org/wiki/Intelligent_Driver_Model">Wikipedia
+ * article IDM.</a>
  * </p>
  * <p>
  * Treiber/Kesting: Traffic Flow Dynamics, 2013, chapter 11.3
  * </p>
  * <p>
- * see <a href="http://xxx.uni-augsburg.de/abs/cond-mat/0002177"> M. Treiber, A. Hennecke, and D. Helbing, Congested
- * Traffic States in Empirical Observations and Microscopic Simulations, Phys. Rev. E 62, 1805 (2000)].</a>
+ * see <a href="http://xxx.uni-augsburg.de/abs/cond-mat/0002177"> M. Treiber, A.
+ * Hennecke, and D. Helbing, Congested Traffic States in Empirical Observations
+ * and Microscopic Simulations, Phys. Rev. E 62, 1805 (2000)].</a>
  * </p>
  * 
  * Model parameters:
@@ -69,126 +71,133 @@ import org.slf4j.LoggerFactory;
 // TODO reduce visibility
 public class IDM extends LongitudinalModelBase {
 
-    /** The Constant LOG. */
-    private static final Logger LOG = LoggerFactory.getLogger(IDM.class);
+	/** The Constant LOG. */
+	private static final Logger LOG = LoggerFactory.getLogger(IDM.class);
 
-    private IModelParameterIDM param;
+	private IModelParameterIDM param;
 
-    public final IModelParameterIDM getParam(){
-    	return this.param;
-    }
-    
-    IDM(IModelParameterIDM parameters) {
-        super(ModelName.IDM);
-        this.param = parameters;
-    }
+	public final IModelParameterIDM getParam() {
+		return this.param;
+	}
 
-    /**
-     * Constructor.
-     * 
-     * @param v0
-     *            desired velocity, m/s
-     * @param a
-     *            maximum acceleration, m/s^2
-     * @param b
-     *            desired deceleration (comfortable braking), m/s^2
-     * @param T
-     *            safe time headway, seconds
-     * @param s0
-     *            bumper to bumper vehicle distance in stationary traffic, meters
-     * @param s1
-     *            gap parameter, meters
-     */
-    public IDM(double v0, double a, double b, double T, double s0, double s1) {
-        super(ModelName.IDM);
-        this.param = create(v0, a, b, T, s0, s1);
-    }
+	IDM(IModelParameterIDM parameters) {
+		super(ModelName.IDM);
+		this.param = parameters;
+	}
 
-    private static ModelParameterIDM create(double v0, double a, double b, double T, double s0, double s1) {
-        ModelParameterIDM modelParameterIDM = new ModelParameterIDM();
-        modelParameterIDM.setV0(v0);
-        modelParameterIDM.setA(a);
-        modelParameterIDM.setB(b);
-        modelParameterIDM.setT(T);
-        modelParameterIDM.setS0(s0);
-        modelParameterIDM.setS1(s1);
-        modelParameterIDM.setDelta(modelParameterIDM.getDelta());
-        return modelParameterIDM;
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param v0
+	 *            desired velocity, m/s
+	 * @param a
+	 *            maximum acceleration, m/s^2
+	 * @param b
+	 *            desired deceleration (comfortable braking), m/s^2
+	 * @param T
+	 *            safe time headway, seconds
+	 * @param s0
+	 *            bumper to bumper vehicle distance in stationary traffic, meters
+	 * @param s1
+	 *            gap parameter, meters
+	 */
+	public IDM(double v0, double a, double b, double T, double s0, double s1) {
+		super(ModelName.IDM);
+		this.param = create(v0, a, b, T, s0, s1);
+	}
 
-    @Override
-    public double calcAcc(Vehicle me, Vehicle frontVehicle, double alphaT, double alphaV0, double alphaA) {
+	private static ModelParameterIDM create(double v0, double a, double b, double T, double s0, double s1) {
+		ModelParameterIDM modelParameterIDM = new ModelParameterIDM();
+		modelParameterIDM.setV0(v0);
+		modelParameterIDM.setA(a);
+		modelParameterIDM.setB(b);
+		modelParameterIDM.setT(T);
+		modelParameterIDM.setS0(s0);
+		modelParameterIDM.setS1(s1);
+		modelParameterIDM.setDelta(modelParameterIDM.getDelta());
+		return modelParameterIDM;
+	}
 
-        // Local dynamical variables
-        final double s = me.getNetDistance(frontVehicle);
-        final double v = me.getSpeed();
-        final double dv = me.getRelSpeed(frontVehicle);
+	@Override
+	public double calcAcc(Vehicle me, Vehicle frontVehicle, double alphaT, double alphaV0, double alphaA) {
 
-        // space dependencies modeled by speedlimits, alpha's
+		// Local dynamical variables
+		final double s = me.getNetDistance(frontVehicle);
+		final double v = me.getSpeed();
+		final double dv = me.getRelSpeed(frontVehicle);
 
-        final double localT = alphaT * param.getT();
-        // consider external speedlimit
-        final double localV0;
-        if (me.getSpeedlimit() != 0.0) {
-            localV0 = Math.min(alphaV0 * getDesiredSpeed(), me.getSpeedlimit());
-        } else {
-            localV0 = alphaV0 * getDesiredSpeed();
-        }
-        final double localA = alphaA * param.getA();
+		// space dependencies modeled by speedlimits, alpha's
 
-        return acc(s, v, dv, localT, localV0, localA);
-    }
+		final double localT = alphaT * param.getT();
+		// consider external speedlimit
+		final double localV0;
+		if (me.getSpeedlimit() != 0.0 && param.getS1()!=-99) {
+			localV0 = Math.min(alphaV0 * getDesiredSpeed(), me.getSpeedlimit());
+		} else {
+			localV0 = alphaV0 * getDesiredSpeed();
+		}
+		final double localA = alphaA * param.getA();
 
-    @Override
-    public double calcAccSimple(double s, double v, double dv) {
-        return acc(s, v, dv, param.getT(), param.getV0(), param.getA());
-    }
+		return acc(s, v, dv, localT, localV0, localA);
 
-    /**
-     * Acc.
-     * 
-     * @param s
-     *            the s
-     * @param v
-     *            the v
-     * @param dv
-     *            the dv
-     * @param TLocal
-     *            the t local
-     * @param v0Local
-     *            the v0 local
-     * @param aLocal
-     *            the a local
-     * @return the double
-     */
-    private double acc(double s, double v, double dv, double TLocal, double v0Local, double aLocal) {
-        // treat special case of v0=0 (standing obstacle)
-        if (v0Local == 0.0) {
-            return 0.0;
-        }
+	}
 
-        final double s0 = getMinimumGap();
-        double sstar = s0 + TLocal * v + param.getS1() * Math.sqrt((v + 0.0001) / v0Local) + (0.5 * v * dv)
-                / Math.sqrt(aLocal * param.getB());
+	@Override
+	public double calcAccSimple(double s, double v, double dv) {
+		return acc(s, v, dv, param.getT(), param.getV0(), param.getA());
+	}
 
-        if (sstar < s0) {
-            sstar = s0;
-        }
+	/**
+	 * Acc.
+	 * 
+	 * @param s
+	 *            the s
+	 * @param v
+	 *            the v
+	 * @param dv
+	 *            the dv
+	 * @param TLocal
+	 *            the t local
+	 * @param v0Local
+	 *            the v0 local
+	 * @param aLocal
+	 *            the a local
+	 * @return the double
+	 */
+	private double acc(double s, double v, double dv, double TLocal, double v0Local, double aLocal) {
+		// treat special case of v0=0 (standing obstacle)
+		if (v0Local == 0.0) {
+			return 0.0;
+		}
 
-        final double aWanted = aLocal * (1.0 - Math.pow((v / v0Local), param.getDelta()) - (sstar / s) * (sstar / s));
+		final double s0 = getMinimumGap();
+		double sstar = s0 + TLocal * v + param.getS1() * Math.sqrt((v + 0.0001) / v0Local)
+				+ (0.5 * v * dv) / Math.sqrt(aLocal * param.getB());
 
-        LOG.debug("aWanted = {}", aWanted);
-        return aWanted; // limit to -bMax in Vehicle
-    }
+		if (sstar < s0) {
+			sstar = s0;
+		}
 
-    @Override
-    protected IModelParameterIDM getParameter() {
-        return param;
-    }
+		final double aWanted = aLocal * (1.0 - Math.pow((v / v0Local), param.getDelta()) - (sstar / s) * (sstar / s));
 
-    public void setDesiredSpeed(double desiredSpeed){
-    	this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT(), this.param.getS0(), this.param.getS1());
-//    	this.param.getV0();
-}
+		LOG.debug("aWanted = {}", aWanted);
+		return aWanted; // limit to -bMax in Vehicle
+	}
+
+	@Override
+	protected IModelParameterIDM getParameter() {
+		return param;
+	}
+
+	public void setDesiredSpeed(double desiredSpeed) {
+		this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT(), this.param.getS0(),
+				this.param.getS1());
+		// this.param.getV0();
+	}
+
+	public void setDesiredSpeed(double desiredSpeed, boolean manualControl) {
+		this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT()-100,
+				this.param.getS0(), -99);
+	}
 
 }

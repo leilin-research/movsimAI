@@ -4,81 +4,86 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.movsim.simulator.vehicles.Vehicle;
 import org.systemx.project.BehaviorEnum;
 import org.systemx.project.ProjectVehicle;
 import org.systemx.qlearning.state.State;
 
 public class Controller {
-
-	static VehicleControl vc;
-	static Boolean vcActive;
+	
+	static VehicleControl vehicleControl = new VehicleControl();
+	static ProjectVehicle controlledVehicle;
 	static long vcid;
+	static Boolean vcActive;
 
-	static State currentState;
 
-	public void checkNewVehicle(long id) {
+	public static void checkNewVehicle(ProjectVehicle vehicle) {
+		
+		if(controlledVehicle!=null) {
+			if(Double.isNaN(controlledVehicle.getSpeed())) {				
+				System.err.println("!!!!!!!!!!RESET!!!!!!!!!!");
+				vcActive = false;
+			}
+		}
+
 		if (vcActive == null || !vcActive) {
-			vcid = id;
-			vc = new VehicleControl();
+			vcid = vehicle.getId();
+			controlledVehicle = vehicle;
 			vcActive = true;
-			System.out.println("NEW===============================" + id);
+			vehicleControl = new VehicleControl();
+			System.out.println("NEW===============================" + vehicle.getId());
 		}
 	}
 	
-	public void checkVehicleCrash(long id) {
-		if (vcActive != false && vcid == id) {
+	public static void checkVehicleCrash(ProjectVehicle vehicle) {
+		if (vcActive != false && vcid == vehicle.getId()) {
 			vcActive = false;
 			vcid = -1;
-			
-			System.out.println("CRASHED===============================" + id);
+			vehicle.resetDesiredSpeed();
+			System.out.println("CRASHED===============================" + vehicle.getId());
 		}
 	}
 	
 
-	public void controlDecision(ProjectVehicle vehicle) {
-		if (vcid == vehicle.getId()) {
+	public static void controlDecision(ProjectVehicle vehicle) {
 
+		if (vcid == vehicle.getId()) {
+			vehicle.setColorObject(Color.red);
+			vehicle.getCommunicatingVehicles().clear();
+					
 //			System.out.println(vehicle.getId() + " ====================================");
 //			List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
 //			for (int i = 0; i < ids.size(); i++) {
 //				System.out.println(vehicle.getCommunicatingVehicles().get(ids.get(i)));
-//			}
+//			}	
 
-			vehicle.getCommunicatingVehicles().clear();
-			
 			if (vehicle.getDistanceToRoadSegmentEnd() < 30) {
 				vcActive = false;
+				vehicle.resetDesiredSpeed();
+				vehicle.setSpeed(vehicle.getSpeedlimit());
 				return;
 			}
-			
-			vehicle.setColorObject(Color.red);
 
-			if (vc.acceleration == 1) {
+			if (vehicleControl.acceleration == 1) {
 				if (vehicle.getSpeed() < 20) {
-					vehicle.modifyDesiredSpeed(-Double.MAX_VALUE);
-					System.out.println("Speed: " + vehicle.getSpeed());
+					vehicle.modifyDesiredSpeed(20);
+					System.out.println("incSpeed: " + vehicle.getSpeed());
 				} else {
 					vehicle.modifyDesiredSpeed(0);
 				}
-				vc.acceleration = 0;
-			} else if (vc.acceleration == -1) {
+				vehicleControl.acceleration = 0;
+			} else if (vehicleControl.acceleration == -1) {
 				if(vehicle.getSpeed() >0) {
 					vehicle.modifyDesiredSpeed(0.000000001);
-					System.out.println("Speed: " + vehicle.getSpeed());
+					System.out.println("decSpeed: " + vehicle.getSpeed());
 				}
-				vc.acceleration = 0;
+				vehicleControl.acceleration = 0;
 			} else {
 				vehicle.modifyDesiredSpeed(0);
 			}
 
-			// if (this.longitudinalModel instanceof IDM) {
-			// IDM IDMModel = (IDM) this.longitudinalModel;
-			// System.out.println("vc.acceleration = 0 : " + IDMModel.getDesiredSpeed() + "
-			// " + getSpeed());
-			// }
-
-			if (vc.laneChange < 0) {
-				vc.laneChange = 0;
+			if (vehicleControl.laneChange < 0) {
+				vehicleControl.laneChange = 0;
 				if (vehicle.getContinousLane() % 1 == 0) {
 					if (vehicle.getLane() > 0) {
 						vehicle.modifiedDesiredLane(BehaviorEnum.rightToleft);
@@ -86,8 +91,8 @@ public class Controller {
 				}
 			}
 
-			if (vc.laneChange > 0) {
-				vc.laneChange = 0;
+			if (vehicleControl.laneChange > 0) {
+				vehicleControl.laneChange = 0;
 				if (vehicle.getContinousLane() % 1 == 0) {
 					vehicle.modifiedDesiredLane(BehaviorEnum.leftToright);
 				}
@@ -95,6 +100,10 @@ public class Controller {
 			}
 
 		}
+	}
+	
+	void getCurrentState() {
+		
 	}
 
 }

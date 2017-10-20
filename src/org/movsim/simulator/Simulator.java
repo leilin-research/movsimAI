@@ -212,7 +212,7 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
         
         /**
          * Initialize external control network server
-         * @author Maxime Guériau
+         * @author Maxime Guï¿½riau
          */
         if(simulationInput.isSetExternalControl()) { //check from config and get ports 
         	//this.externalControlServer = new Server(simulationInput.getExternalControl().getAgentPort(), simulationInput.getExternalControl().getBackLogPort()); // create server
@@ -481,6 +481,7 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
                 }
 
                 final Vehicle veh = vehGenerator.createVehicle(testVehicle);
+                
                 final double meanDistanceInLane = 1. / (rhoLocal + MovsimConstants.SMALL_VALUE);
                 // TODO icMacro for ca
                 // final double minimumGap = veh.getLongitudinalModel().isCA() ? veh.getLength() : veh.getLength() +

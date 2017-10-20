@@ -47,8 +47,8 @@ import org.movsim.viewer.ui.LogWindow;
 import org.movsim.viewer.ui.ViewProperties;
 import org.movsim.viewer.util.LocalizationStrings;
 import org.systemx.project.control.VehicleControl;
-import org.systemx.vehiclecontrol.mainDraw;
-import org.systemx.vehiclecontrol.mainFrame;
+import org.systemx.project.vehiclecontrol.mainDraw;
+import org.systemx.project.vehiclecontrol.mainFrame;
 
 public class App {
 

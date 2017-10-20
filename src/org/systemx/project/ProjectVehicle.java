@@ -1,65 +1,36 @@
 package org.systemx.project;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.movsim.autogen.VehiclePrototypeConfiguration;
-import org.movsim.network.autogen.opendrive.Lane;
-import org.movsim.network.autogen.opendrive.Lane.Speed;
-import org.movsim.simulator.roadnetwork.Lanes;
 import org.movsim.simulator.vehicles.Vehicle;
 import org.movsim.simulator.vehicles.lanechange.LaneChangeModel;
 import org.movsim.simulator.vehicles.lanechange.LaneChangeModel.LaneChangeDecision;
 import org.movsim.simulator.vehicles.longitudinalmodel.acceleration.IDM;
 import org.movsim.simulator.vehicles.longitudinalmodel.acceleration.LongitudinalModelBase;
 import org.systemx.project.control.Controller;
-import org.systemx.project.control.VehicleControl;
-
-import fr.ifsttar.licit.simulator.agents.communication.messages.MeasureMessage;
 import fr.ifsttar.licit.simulator.agents.communication.messages.Message;
-import fr.ifsttar.licit.simulator.agents.perception.MeasurementPerception;
 import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
-import fr.ifsttar.licit.simulator.agents.perception.sensors.vehicles.measurements.GPSMeasurement;
-import fr.ifsttar.licit.simulator.agents.perception.sensors.vehicles.measurements.Measurement;
-import fr.ifsttar.licit.simulator.agents.perception.sensors.vehicles.measurements.TelemeterMeasurement;
 import fr.ifsttar.licit.simulator.agents.perception.vehicles.VehicleSelfPerception;
 
 public class ProjectVehicle extends Vehicle {
-
-	/*
-	 * Constructor
-	 */
-
-	/*
-	 * used contructor.
-	 */
-	static Controller controller;
+	
+	
 	LaneChangeDecision manualLaneChange = LaneChangeDecision.NONE;
 
 	public ProjectVehicle(String label, LongitudinalModelBase accelerationModel,
 			VehiclePrototypeConfiguration configuration, LaneChangeModel laneChangeModel) {
 		super(label, accelerationModel, configuration, laneChangeModel);
-		if(controller == null) {
-			controller = new Controller();
-		}
-		controller.checkNewVehicle(this.getId());
+		Controller.checkNewVehicle(this);
 	}
 
 	public ProjectVehicle(Vehicle vehicle) {
 		super(vehicle);
-		if(controller == null) {
-			controller = new Controller();
-		}
-		controller.checkNewVehicle(this.getId());
+		Controller.checkNewVehicle(this);
 	}
 
 	public ProjectVehicle(double roadLength, double d, int laneNumber, double e, double f) {
 		super(roadLength, d, laneNumber, e, f);
-		if(controller == null) {
-			controller = new Controller();
-		}
-		controller.checkNewVehicle(this.getId());
+		Controller.checkNewVehicle(this);
 	}
 
 	SensedVehicle immediateLeader = null;
@@ -129,15 +100,21 @@ public class ProjectVehicle extends Vehicle {
 		}
 
 		sendMessage(new CamMessage(getId(), getFrontPosition(), getLane(), getSpeed(), getAcc()));
-
-		controller.controlDecision(this);
+		
+		Controller.controlDecision(this);
 	}
 
 	public void modifyDesiredSpeed(double ns) {
 		if (this.longitudinalModel instanceof IDM) {
 			IDM IDMModel = (IDM) this.longitudinalModel;
-			IDMModel.setDesiredSpeed(ns);
-
+			IDMModel.setDesiredSpeed(ns,true);
+		}
+	}
+	
+	public void resetDesiredSpeed() {
+		if (this.longitudinalModel instanceof IDM) {
+			IDM IDMModel = (IDM) this.longitudinalModel;
+			IDMModel.setDesiredSpeed(getSpeedlimit());
 		}
 	}
 
@@ -171,8 +148,8 @@ public class ProjectVehicle extends Vehicle {
 		this.manualLaneChange = manualLaneChange;
 	}
 	
-	public void vehicleCrashed(long id) {
-		controller.checkVehicleCrash(id);
+	public void vehicleCrashed() {
+		Controller.checkVehicleCrash(this);
 	}
 
 }

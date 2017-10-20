@@ -13,52 +13,35 @@ import org.systemx.qlearning.state.StatesList;
 
 public class QLearning {
 
-	private final double alpha = 0.1; // Learning rate
-	private final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
-	
-	private final StatesList statesList;
-	
-	public QLearning(int numberOfLanes, int speedLimit) {
-		super();
-		statesList = new StatesList(numberOfLanes, speedLimit);
-		// TODO Auto-generated constructor stub
-	}
-	State getCurrentState(){
-		return new State();
-	}
-	boolean isFinalState() {
-		return false;
-	}
-	
-	boolean isStateFinished() {
-		return false;
-	}
-	
-	int getReward() {
-		return 0;
-	}
+	private static final double alpha = 0.1; // Learning rate
+	private static final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 
-	
-	void calculateQ() {
-		Random rand = new Random();
-		
-		State currentState = getCurrentState();
+	private static final int numberOfLanes = 3;
+	private static final int speedLimit = 20;
+
+	private static final StatesList statesList = new StatesList(numberOfLanes, speedLimit);
+
+	private static State currentState;
+	private static Action currentAction;
+
+	static void init(State realCurrentState) {
+		currentState = realCurrentState;
 		statesList.addState(currentState);
-		while (!isFinalState()) {
-			Action nextAction = statesList.predictNextAction(currentState);
-			State nextState = statesList.getNextState(currentState, nextAction);
-			
-			// Q(state,action)= Q(state,action) + alpha * (R(state,action) + gamma *
-			// Max(next state, all actions) - Q(state,action))
-			double q = currentState.getQValue(nextAction);
-			
-			double maxQ = nextState.getMaxQValue();
-			int r = getReward();
+	}
 
-			double value = q + alpha * (r + gamma * maxQ - q);
-			currentState.setQValue(nextAction, value);
-			currentState = nextState;
-		}
+	static Action realTimeCalculateQ(State realNextState, double reward) {
+		State nextState = statesList.setNextState(currentState, realNextState);
+		double q = currentState.getQValue(currentAction);
+
+		double maxQ = nextState.getMaxQValue(nextState.getPossibleActions(numberOfLanes, speedLimit));
+		double r = reward;
+
+		double Qvalue = q + alpha * (r + gamma * maxQ - q);
+		currentState.setQValue(currentAction, Qvalue);
+
+		currentState = nextState;
+		currentAction = statesList.predictNextAction(currentState);
+		return currentAction;
 	}
 
 }

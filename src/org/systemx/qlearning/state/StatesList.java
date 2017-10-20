@@ -29,20 +29,37 @@ public class StatesList {
 		return selector.getExpBetaSelectedAction(state, possibleActions);
 	}
 	
-	public State getNextState(State state, Action action) {
-		State testState = state.getNextState(action);
-		for (int i = 0; i < state.getRelatedStates().size(); i++) {
-			if(testState.matchesState(states.get(state.getRelatedStates().get(i)))) {
-				return states.get(state.getRelatedStates().get(i));
-			}
-		}
+//	public State getNextState(State state, Action action) {
+//		State testState = state.getNextState(action);
+//		
+//		for (int i = 0; i < state.getRelatedStates().size(); i++) {
+//			if(testState.matchesState(states.get(state.getRelatedStates().get(i)))) {
+//				return states.get(state.getRelatedStates().get(i));
+//			}
+//		}
+//		
+//		State nextState = new State(testState);
+//		nextState.getRelatedStates().add(states.indexOf(state));
+//		states.add(nextState);
+//		state.getRelatedStates().add(states.indexOf(nextState));
+//
+//		return nextState;
+//	}
+	
+	public State setNextState(State currentState, State testState) {
 		
-		State nextState = new State(testState);
-		nextState.getRelatedStates().add(states.indexOf(state));
-		states.add(nextState);
-		state.getRelatedStates().add(states.indexOf(nextState));
-
-		return nextState;
+	for (int i = 0; i < currentState.getRelatedStates().size(); i++) {
+		if(testState.matchesState(states.get(currentState.getRelatedStates().get(i)))) {
+			return states.get(currentState.getRelatedStates().get(i));
+		}
 	}
+	
+	State nextState = new State(testState);
+	nextState.getRelatedStates().add(states.indexOf(currentState));
+	states.add(nextState);
+	currentState.getRelatedStates().add(states.indexOf(nextState));
+
+	return nextState;
+}
 
 }

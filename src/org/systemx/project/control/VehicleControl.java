@@ -5,7 +5,14 @@ public class VehicleControl {
     public static int acceleration;
     public static int laneChange;
 
-    public void moveRight() {
+    public VehicleControl() {
+		super();
+		acceleration = 0;
+		laneChange = 0;
+		// TODO Auto-generated constructor stub
+	}
+
+	public void moveRight() {
     	laneChange = 1;
     }
 

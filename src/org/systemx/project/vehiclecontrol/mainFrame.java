@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 
 import org.systemx.project.control.VehicleControl;
+import org.systemx.qlearning.QLearning;
 
 public class mainFrame extends JFrame implements KeyListener {
 	private mainDraw draw;
@@ -24,6 +25,8 @@ public class mainFrame extends JFrame implements KeyListener {
 		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
 			draw.moveUp();
 			vc.moveUp();
+		}else if (e.getKeyCode() == KeyEvent.VK_S) {
+			QLearning.SaveList();
 		}
 	}
 

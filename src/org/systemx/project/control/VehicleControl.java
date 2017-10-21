@@ -2,7 +2,7 @@ package org.systemx.project.control;
 
 import org.systemx.project.BehaviorEnum;
 import org.systemx.project.ProjectVehicle;
-import org.systemx.qlearning.commun.Action;
+import org.systemx.qlearning.state.Action;
 
 public class VehicleControl {
 
@@ -137,5 +137,6 @@ public class VehicleControl {
 	public static boolean isActionExecuted() {
 		return actionExecuted;
 	}
+
 
 }

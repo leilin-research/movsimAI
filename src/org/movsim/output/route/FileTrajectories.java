@@ -140,7 +140,7 @@ public class FileTrajectories extends FileOutputBase implements SimulationTimeSt
         if (isLargerThanStartTimeInterval() && isSmallerThanEndTimeInterval()) {
             if (iterationCount % 1000 == 0) {
             	//joseph
-                //logger.info("time = {}, timestep= {}", time, dt);
+                logger.info("time = {}, timestep= {}", time, dt);
             }
             if ((time - lastUpdateTime + MovsimConstants.SMALL_VALUE) >= traj.getDt()) {
                 lastUpdateTime = time;

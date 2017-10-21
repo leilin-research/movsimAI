@@ -10,9 +10,10 @@ import org.systemx.project.BehaviorEnum;
 import org.systemx.project.ProjectSensedVehicle;
 import org.systemx.project.ProjectVehicle;
 import org.systemx.qlearning.QLearning;
-import org.systemx.qlearning.commun.Action;
+import org.systemx.qlearning.state.Action;
 import org.systemx.qlearning.state.CarState;
 import org.systemx.qlearning.state.State;
+import org.systemx.qlearning.state.StatesListGroup;
 
 import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
 
@@ -22,8 +23,7 @@ public class Controller {
 	static ProjectVehicle controlledVehicle;
 	static long vcid;
 	static Boolean vcActive;
-
-	static QLearning qLearning = new QLearning();
+	static QLearning qLearning = new QLearning(true);
 
 	public static void checkNewVehicle(ProjectVehicle vehicle) {
 
@@ -47,9 +47,10 @@ public class Controller {
 			vcActive = false;
 			vcid = -1;
 			vehicle.resetDesiredSpeed();
-			QLearning.realTimeCalculateQCrash(-10000);
+			//QLearning.realTimeCalculateQCrash();
 		}
 	}
+
 
 	public static void controlDecision(ProjectVehicle vehicle) {
 
@@ -59,7 +60,8 @@ public class Controller {
 			State state = getCurrentState(vehicle);
 
 			if (vehicleControl.isActionExecuted()) {
-				Action action = qLearning.realTimeCalculateQ(state, vehicle.getSpeed());
+				//Action action = qLearning.realTimeCalculateQ(state);
+				Action action = qLearning.realTimeTestQ(state);
 				vehicleControl.executeAction(action, vehicle);
 			}
 

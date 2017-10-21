@@ -17,7 +17,7 @@
         </VehiclePrototypeConfiguration>
     </VehiclePrototypes>
     <Scenario network_filename="urban_network.xodr">
-        <Simulation timestep="0.1" duration="120000" seed="42" crash_exit="true">
+        <Simulation timestep="0.1" duration="1200000" seed="42" crash_exit="true">
 			<ExternalControl agent_port="12300" backlog_port="10" />
             <TrafficComposition>
                 <VehicleType label="IDM" fraction="1.0" relative_v0_randomization="0.2" />

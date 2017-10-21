@@ -13,8 +13,7 @@ import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle
 import fr.ifsttar.licit.simulator.agents.perception.vehicles.VehicleSelfPerception;
 
 public class ProjectVehicle extends Vehicle {
-	
-	
+
 	LaneChangeDecision manualLaneChange = LaneChangeDecision.NONE;
 
 	public ProjectVehicle(String label, LongitudinalModelBase accelerationModel,

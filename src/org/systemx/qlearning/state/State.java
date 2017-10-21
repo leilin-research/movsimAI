@@ -3,43 +3,62 @@ package org.systemx.qlearning.state;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.systemx.qlearning.commun.Action;
-import org.systemx.qlearning.commun.QValues;
-
 public class State {
 
 	private QValues qValues;
 	private CarState myCar;
-	private List<CarState> AdjacentCars;
+	private List<CarState> adjacentCars;
 	private List<Integer> relatedStates;
 
 	public State(State state) {
 		qValues = new QValues();
 		myCar = new CarState();
-		AdjacentCars = new ArrayList<CarState>();
+		adjacentCars = new ArrayList<CarState>();
 		relatedStates = new ArrayList<Integer>();
 		
 		this.qValues = new QValues(state.qValues);
 		this.myCar = new CarState(state.myCar);
 
-		for (int i = 0; i < state.AdjacentCars.size(); i++) {
-			AdjacentCars.add(new CarState(state.AdjacentCars.get(i)));
+		for (int i = 0; i < state.adjacentCars.size(); i++) {
+			adjacentCars.add(new CarState(state.adjacentCars.get(i)));
 		}
 	}
+	
+
+	public State(QValues qValues, CarState myCar, List<CarState> adjacentCars, List<Integer> relatedStates) {
+		super();
+		this.qValues = new QValues();
+		this.myCar = new CarState();
+		this.adjacentCars = new ArrayList<CarState>();
+		this.relatedStates = new ArrayList<Integer>();
+		
+		this.qValues = new QValues(qValues);
+		this.myCar = new CarState(myCar);
+
+		for (int i = 0; i < adjacentCars.size(); i++) {
+			this.adjacentCars.add(new CarState(adjacentCars.get(i)));
+		}
+		
+		for (int i = 0; i < relatedStates.size(); i++) {
+			this.relatedStates.add(relatedStates.get(i));
+		}
+	}
+
+
 
 	public State() {
 		qValues = new QValues();
 		myCar = new CarState();
-		AdjacentCars = new ArrayList<CarState>();
+		adjacentCars = new ArrayList<CarState>();
 		relatedStates = new ArrayList<Integer>();
 	}
 	
 
-	public QValues getqValues() {
+	public QValues getQValues() {
 		return qValues;
 	}
 
-	public void setqValues(QValues qValues) {
+	public void setQValues(QValues qValues) {
 		this.qValues = qValues;
 	}
 
@@ -52,11 +71,11 @@ public class State {
 	}
 
 	public List<CarState> getAdjacentCars() {
-		return AdjacentCars;
+		return adjacentCars;
 	}
 
 	public void setAdjacentCars(List<CarState> adjacentCars) {
-		AdjacentCars = adjacentCars;
+		this.adjacentCars = adjacentCars;
 	}
 
 	public List<Integer> getRelatedStates() {
@@ -73,6 +92,10 @@ public class State {
 
 	public double getMaxQValue(List<Action> possibleActions) {
 		return qValues.getMaxValue(possibleActions);
+	}
+	
+	public Action getMaxQValueAction(List<Action> possibleActions) {
+		return qValues.getMaxValueAction(possibleActions);
 	}
 
 	public void setQValue(Action action, double q) {
@@ -103,9 +126,9 @@ public class State {
 
 	public boolean matchesState(State state) {
 		if(myCar.matchesCarState(state.myCar)) {
-			if(AdjacentCars.size() == state.AdjacentCars.size()) {
-				for (int i = 0; i < AdjacentCars.size(); i++) {
-					if(!state.carAdjacent(AdjacentCars.get(i))) {
+			if(adjacentCars.size() == state.adjacentCars.size()) {
+				for (int i = 0; i < adjacentCars.size(); i++) {
+					if(!state.carAdjacent(adjacentCars.get(i))) {
 						return false;
 					}
 				}
@@ -116,8 +139,8 @@ public class State {
 	}
 	
 	boolean carAdjacent(CarState car) {
-		for (int i = 0; i < AdjacentCars.size(); i++) {
-			if(AdjacentCars.get(i).matchesCarState(car)) {
+		for (int i = 0; i < adjacentCars.size(); i++) {
+			if(adjacentCars.get(i).matchesCarState(car)) {
 				return true;
 			}
 		}
@@ -127,7 +150,7 @@ public class State {
 
 	@Override
 	public String toString() {
-		return "State [myCar=" + myCar + ", AdjacentCars=" + AdjacentCars + "]";
+		return "State [myCar=" + myCar + ", AdjacentCars=" + adjacentCars + "]";
 	}
 	
 	

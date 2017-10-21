@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Random;
 
 import org.systemx.qlearning.QLearning;
+import org.systemx.qlearning.state.Action;
+import org.systemx.qlearning.state.QValues;
 import org.systemx.qlearning.state.State;
 
 public class ExpBetaSelector {
@@ -35,7 +37,7 @@ public class ExpBetaSelector {
 		Map<Action, Double> weights = new HashMap<Action, Double>();
 
 		for (Action a : possibleActions) {
-			weights.put(a, this.calcActionWeight(state.getqValues(), a , maxQ));
+			weights.put(a, this.calcActionWeight(state.getQValues(), a , maxQ));
 			if(TestPrint) {
 				System.err.print(a + ":" + weights.get(a) + " ");
 			}

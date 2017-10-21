@@ -35,6 +35,10 @@ import org.movsim.input.ProjectMetaData;
 import org.movsim.logging.LogFileAppender;
 import org.movsim.logging.Logger;
 import org.movsim.simulator.Simulator;
+import org.systemx.project.control.VehicleControl;
+import org.systemx.project.vehiclecontrol.mainDraw;
+import org.systemx.project.vehiclecontrol.mainFrame;
+import org.systemx.qlearning.QLearning;
 import org.xml.sax.SAXException;
 
 /**
@@ -54,8 +58,8 @@ public class MovsimCoreMain {
      * @throws JAXBException
      * @throws ParserConfigurationException
      */
-    public static void main(String[] args) throws JAXBException, SAXException {
-
+    public static void main(String[] args) throws JAXBException, SAXException {    	
+    	
         Locale.setDefault(Locale.US);
 
         // final ProjectMetaData projectMetaData = ProjectMetaData.getInstance();
@@ -96,6 +100,8 @@ public class MovsimCoreMain {
 	     
       /*  }  */
         
+	        //joseph
+	        QLearning.SaveList();
         
     }
 }

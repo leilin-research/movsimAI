@@ -5,10 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import org.systemx.qlearning.QLearning;
 import org.systemx.qlearning.state.State;
 
 public class ExpBetaSelector {
 	double beta;
+	
+	boolean TestPrint = false;
 	
 	public ExpBetaSelector(double beta) {
 		super();
@@ -17,6 +21,8 @@ public class ExpBetaSelector {
 
 	private double calcActionWeight(QValues qValues, Action action, double maxQ) {
 		if (qValues.actions.contains(action)) {
+			TestPrint = true;
+			System.err.println(action+" Q:" + qValues.getValue(action));
 			return Math.exp(this.beta * (qValues.getValue(action) - maxQ));
 		} else {
 			return Math.exp(this.beta * (0 - maxQ));
@@ -30,6 +36,13 @@ public class ExpBetaSelector {
 
 		for (Action a : possibleActions) {
 			weights.put(a, this.calcActionWeight(state.getqValues(), a , maxQ));
+			if(TestPrint) {
+				System.err.print(a + ":" + weights.get(a) + " ");
+			}
+		}
+		if(TestPrint) {
+			System.err.println();
+			System.err.println("------------------------------------------------------");
 		}
 		return weights;
 	}

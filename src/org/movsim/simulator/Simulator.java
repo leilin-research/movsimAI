@@ -610,8 +610,9 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
     public void timeStep(double dt, double simulationTime, long iterationCount) {
         if (iterationCount % 200 == 0) {
             if (LOG.isInfoEnabled()) {
-                LOG.info(String.format("Simulator.update :time = %.2fs = %.2fh, dt = %.2fs, projectName=%s",
-                        simulationTime, simulationTime / 3600, dt, projectName));
+            	//joseph
+//                LOG.info(String.format("Simulator.update :time = %.2fs = %.2fh, dt = %.2fs, projectName=%s",
+//                        simulationTime, simulationTime / 3600, dt, projectName));
             }
         }
 

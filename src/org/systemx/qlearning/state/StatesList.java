@@ -2,6 +2,7 @@ package org.systemx.qlearning.state;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.systemx.qlearning.commun.Action;
 import org.systemx.qlearning.commun.ExpBetaSelector;
@@ -23,28 +24,19 @@ public class StatesList {
 		states.add(state);
 	}
 	
-	public Action predictNextAction(State state) {
+	public Action predictNextActionOld(State state) {
 		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
 		ExpBetaSelector selector = new ExpBetaSelector(1);
 		return selector.getExpBetaSelectedAction(state, possibleActions);
 	}
 	
-//	public State getNextState(State state, Action action) {
-//		State testState = state.getNextState(action);
-//		
-//		for (int i = 0; i < state.getRelatedStates().size(); i++) {
-//			if(testState.matchesState(states.get(state.getRelatedStates().get(i)))) {
-//				return states.get(state.getRelatedStates().get(i));
-//			}
-//		}
-//		
-//		State nextState = new State(testState);
-//		nextState.getRelatedStates().add(states.indexOf(state));
-//		states.add(nextState);
-//		state.getRelatedStates().add(states.indexOf(nextState));
-//
-//		return nextState;
-//	}
+	public Action predictNextAction(State state) {
+		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
+		Random rand = new Random();
+		return possibleActions.get(rand.nextInt(possibleActions.size()));
+	}
+	
+
 	
 	public State setNextState(State currentState, State testState) {
 		

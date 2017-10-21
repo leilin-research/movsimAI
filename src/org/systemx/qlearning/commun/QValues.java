@@ -9,6 +9,8 @@ public class QValues {
 
 	List<Action> actions = new ArrayList<Action>();
 	List<Double> qList = new ArrayList<Double>();
+	
+	
 
 	public QValues() {
 		super();

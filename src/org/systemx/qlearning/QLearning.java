@@ -16,8 +16,8 @@ public class QLearning {
 	private static final double alpha = 0.1; // Learning rate
 	private static final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 
-	private static final int numberOfLanes = 3;
-	private static final int speedLimit = 20;
+	public static final int numberOfLanes = 3;
+	public static final int speedLimit = 20;
 
 	private static final StatesList statesList = new StatesList(numberOfLanes, speedLimit);
 
@@ -26,14 +26,14 @@ public class QLearning {
 	
 	private static boolean Initialized = false;
 	
-	static Action init(State realCurrentState) {
+	static private Action init(State realCurrentState) {
 		currentState = realCurrentState;
 		statesList.addState(currentState);
 		currentAction = statesList.predictNextAction(currentState);
 		return currentAction;
 	}
 
-	static Action realTimeCalculateQ(State realNextState, double reward) {
+	static public Action realTimeCalculateQ(State realNextState, double reward) {
 		if(!Initialized) {
 			Initialized = true;
 			return init(realNextState);
@@ -46,11 +46,31 @@ public class QLearning {
 		double r = reward;
 
 		double Qvalue = q + alpha * (r + gamma * maxQ - q);
+		
 		currentState.setQValue(currentAction, Qvalue);
 
 		currentState = nextState;
 		currentAction = statesList.predictNextAction(currentState);
 		return currentAction;
+	}
+	
+	static public void realTimeCalculateQCrash(double reward) {
+		double q = currentState.getQValue(currentAction);
+
+		double maxQ = 0;
+		double r = reward;
+
+		double Qvalue = q + alpha * (r + gamma * maxQ - q);
+		
+		System.err.println(currentAction + " CRASH: " + Qvalue);
+		currentState.setQValue(currentAction, Qvalue);
+
+		realTimeCalculateQReset();
+	}
+	
+	static public void realTimeCalculateQReset() {
+		currentState = null;
+		Initialized = false;
 	}
 
 }

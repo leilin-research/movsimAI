@@ -102,6 +102,7 @@ public class ProjectVehicle extends Vehicle {
 		sendMessage(new CamMessage(getId(), getFrontPosition(), getLane(), getSpeed(), getAcc()));
 		
 		Controller.controlDecision(this);
+		getCommunicatingVehicles().clear();
 	}
 
 	public void modifyDesiredSpeed(double ns) {

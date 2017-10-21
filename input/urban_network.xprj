@@ -17,14 +17,14 @@
         </VehiclePrototypeConfiguration>
     </VehiclePrototypes>
     <Scenario network_filename="urban_network.xodr">
-        <Simulation timestep="0.1" duration="1200" seed="42" crash_exit="true">
+        <Simulation timestep="0.1" duration="120000" seed="42" crash_exit="true">
 			<ExternalControl agent_port="12300" backlog_port="10" />
             <TrafficComposition>
                 <VehicleType label="IDM" fraction="1.0" relative_v0_randomization="0.2" />
             </TrafficComposition>
             <Road id="1">
                 <TrafficSource logging="false">
-                    <Inflow t="0" q_per_hour="900" v="13.88" />
+                    <Inflow t="0" q_per_hour="300" v="13.88" />
                 </TrafficSource>
 				
 				<RoadSideUnits>

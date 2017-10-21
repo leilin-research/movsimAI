@@ -83,11 +83,11 @@ public class State {
 		List<Action> actions = new ArrayList<>();
 		actions.add(Action.noAction);
 
-		if (myCar.lane != 0 && myCar.lane%1 == 0) {
+		if (myCar.lane >1 ) {
 			actions.add(Action.goLeft);
 		}
 
-		if (myCar.lane < numberOfLanes && myCar.lane%1 == 0) {
+		if (myCar.lane < numberOfLanes) {
 			actions.add(Action.goRight);
 		}
 
@@ -101,7 +101,7 @@ public class State {
 		return actions;
 	}
 
-	boolean matchesState(State state) {
+	public boolean matchesState(State state) {
 		if(myCar.matchesCarState(state.myCar)) {
 			if(AdjacentCars.size() == state.AdjacentCars.size()) {
 				for (int i = 0; i < AdjacentCars.size(); i++) {
@@ -124,5 +124,12 @@ public class State {
 		
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "State [myCar=" + myCar + ", AdjacentCars=" + AdjacentCars + "]";
+	}
+	
+	
 
 }

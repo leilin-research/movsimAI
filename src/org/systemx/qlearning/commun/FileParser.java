@@ -39,30 +39,29 @@ public class FileParser {
 			QValues qValuesTemp = new QValues();
 			CarState myCarTemp = new CarState();
 			List<CarState> AdjacentCarsTemp = new ArrayList<CarState>();
-			List<Integer> relatedStates = new ArrayList<Integer>();
+			List<String> relatedStatesIds = new ArrayList<String>();
 			
 			List<String> splitList = Arrays.asList(lines.get(i).split(";"));
 			
-
-			qValuesTemp.parseValues(splitList.get(0));
+			qValuesTemp.parseValues(splitList.get(1));
 			
-			if(!splitList.get(1).isEmpty()) {
-				String[] relatedStatesString = splitList.get(1).split("_");	
+			if(!splitList.get(2).isEmpty()) {
+				String[] relatedStatesString = splitList.get(2).split("_");	
 				for (int j = 0; j < relatedStatesString.length; j++) {
-					relatedStates.add(Integer.parseInt(relatedStatesString[j]));
+					relatedStatesIds.add(relatedStatesString[j]);
 				}
 			}
 		
-			myCarTemp.parseValues(splitList.get(2));
+			myCarTemp.parseValues(splitList.get(3));
 			
-			for (int j = 3; j < splitList.size(); j++) {
+			for (int j = 4; j < splitList.size(); j++) {
 				CarState carTemp = new CarState();
 				carTemp.parseValues(splitList.get(j));
 				AdjacentCarsTemp.add(carTemp);
 			}
 			
-			State stateTemp = new State(qValuesTemp, myCarTemp, AdjacentCarsTemp, relatedStates);
-			stateList.addState(stateTemp);
+			State stateTemp = new State(qValuesTemp, myCarTemp, AdjacentCarsTemp, relatedStatesIds);
+			stateList.addState(stateTemp.getId(),stateTemp);
 			progressBar.update(i);
 		}
 		System.out.println();
@@ -72,7 +71,6 @@ public class FileParser {
 		return stateList;
 	}
 
-	
 
 	public static void writeFile(String path, StatesList statesList) throws IOException {
 		File file = new File(path);
@@ -85,15 +83,20 @@ public class FileParser {
 		out.println(statesList.getNumberOfLanes());
 		out.println(statesList.getSpeedLimit());
 		
-		for (int i = 0; i < statesList.getStates().size(); i++) {
-			State tempState = statesList.getStates().get(i);
+		List<String> keySet = new ArrayList<String>(statesList.getStates().keySet());
+		
+		for (int i = 0; i < keySet.size(); i++) {
+			State tempState = statesList.getStates().get(keySet.get(i));
 			s = "";
+			s = s + tempState.getId();
+			s = s + ";";
+			
 			s = s + tempState.getQValues().serialiseValues();
 			s = s + ";";
 			
-			for (int j = 0; j < tempState.getRelatedStates().size(); j++) {
-				s = s + tempState.getRelatedStates().get(j);
-				if(j<tempState.getRelatedStates().size() - 1) {
+			for (int j = 0; j < tempState.getRelatedStatesIds().size(); j++) {
+				s = s + tempState.getRelatedStatesIds().get(j);
+				if(j<tempState.getRelatedStatesIds().size() - 1) {
 					s = s + "_";	
 				}
 			}
@@ -126,15 +129,6 @@ public class FileParser {
 		}
 		br.close();
 		return lines;
-	}
-
-	private int attributeIndex(String attributeName, List<List<String>> element) {
-		for (int i = 0; i < element.size(); i++) {
-			if (element.get(i).get(0).matches(attributeName)) {
-				return i;
-			}
-		}
-		return -1;
 	}
 	
 	public static boolean isNumeric(String str) {

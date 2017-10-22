@@ -46,7 +46,7 @@ public class QLearning {
 	}
 
 	static private Action init(State realCurrentState) {
-		currentState = statesList.addNextState(realCurrentState);
+		currentState = statesList.addNewState(realCurrentState);
 		currentAction = statesList.predictNextAction(currentState);
 		return currentAction;
 	}

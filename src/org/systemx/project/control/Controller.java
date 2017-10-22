@@ -26,14 +26,6 @@ public class Controller {
 	static QLearning qLearning = new QLearning(true);
 
 	public static void checkNewVehicle(ProjectVehicle vehicle) {
-
-		// if (controlledVehicle != null) {
-		// if (Double.isNaN(controlledVehicle.getSpeed())) {
-		// System.err.println("!!!!!!!!!!RESET!!!!!!!!!!");
-		// vcActive = false;
-		// }
-		// }
-
 		if (vcActive == null || !vcActive) {
 			vcid = vehicle.getId();
 			controlledVehicle = vehicle;
@@ -47,7 +39,7 @@ public class Controller {
 			vcActive = false;
 			vcid = -1;
 			vehicle.resetDesiredSpeed();
-			//QLearning.realTimeCalculateQCrash();
+			QLearning.realTimeCalculateQCrash();
 		}
 	}
 
@@ -60,8 +52,8 @@ public class Controller {
 			State state = getCurrentState(vehicle);
 
 			if (vehicleControl.isActionExecuted()) {
-				//Action action = qLearning.realTimeCalculateQ(state);
-				Action action = qLearning.realTimeTestQ(state);
+				Action action = qLearning.realTimeCalculateQ(state);
+				//Action action = qLearning.realTimeTestQ(state);
 				vehicleControl.executeAction(action, vehicle);
 			}
 
@@ -78,9 +70,11 @@ public class Controller {
 	}
 
 	private static State getCurrentState(ProjectVehicle vehicle) {
-		State state = new State();
-		state.setMyCar(new CarState(vehicle.getLane(), 0, (int) vehicle.getSpeed()));
+		
+		CarState myCar = new CarState(vehicle.getLane(), 0, (int) vehicle.getSpeed());
 
+		List<CarState> adjacentCars = new ArrayList<CarState>(); 
+		
 		List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
@@ -88,26 +82,11 @@ public class Controller {
 				int lane = ((ProjectSensedVehicle) sv).getSenderLane();
 				int position = (int) (((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition());
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
-				state.getAdjacentCars().add(new CarState(lane, position, speed));
+				adjacentCars.add(new CarState(lane, position, speed));
 			}
 		}
+		
+		State state = new State(myCar,adjacentCars);
 		return state;
 	}
-
-	static State lastState;
-
-	private static boolean stateChanged(State state) {
-		if (lastState == null) {
-			lastState = new State(state);
-			return true;
-		} else {
-			if (lastState.matchesState(state)) {
-				return false;
-			} else {
-				lastState = new State(state);
-				return true;
-			}
-		}
-	}
-
 }

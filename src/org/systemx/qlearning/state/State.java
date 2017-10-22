@@ -8,14 +8,17 @@ public class State {
 	private QValues qValues;
 	private CarState myCar;
 	private List<CarState> adjacentCars;
-	private List<Integer> relatedStates;
+	private List<String> relatedStatesIds;
+	String id;
 
 	public State(State state) {
 		qValues = new QValues();
 		myCar = new CarState();
 		adjacentCars = new ArrayList<CarState>();
-		relatedStates = new ArrayList<Integer>();
-		
+		relatedStatesIds = new ArrayList<String>();
+
+		id = state.getId();
+
 		this.qValues = new QValues(state.qValues);
 		this.myCar = new CarState(state.myCar);
 
@@ -24,35 +27,42 @@ public class State {
 		}
 	}
 	
-
-	public State(QValues qValues, CarState myCar, List<CarState> adjacentCars, List<Integer> relatedStates) {
+	public State(CarState myCar, List<CarState> adjacentCars) {
 		super();
 		this.qValues = new QValues();
 		this.myCar = new CarState();
 		this.adjacentCars = new ArrayList<CarState>();
-		this.relatedStates = new ArrayList<Integer>();
-		
+		this.relatedStatesIds = new ArrayList<String>();
+
+		this.myCar = new CarState(myCar);
+
+		for (int i = 0; i < adjacentCars.size(); i++) {
+			this.adjacentCars.add(new CarState(adjacentCars.get(i)));
+		}
+
+		this.id = calculateId();
+	}
+
+	public State(QValues qValues, CarState myCar, List<CarState> adjacentCars, List<String> relatedStates) {
+		super();
+		this.qValues = new QValues();
+		this.myCar = new CarState();
+		this.adjacentCars = new ArrayList<CarState>();
+		this.relatedStatesIds = new ArrayList<String>();
+
 		this.qValues = new QValues(qValues);
 		this.myCar = new CarState(myCar);
 
 		for (int i = 0; i < adjacentCars.size(); i++) {
 			this.adjacentCars.add(new CarState(adjacentCars.get(i)));
 		}
-		
+
 		for (int i = 0; i < relatedStates.size(); i++) {
-			this.relatedStates.add(relatedStates.get(i));
+			this.relatedStatesIds.add(relatedStates.get(i));
 		}
+
+		this.id = calculateId();
 	}
-
-
-
-	public State() {
-		qValues = new QValues();
-		myCar = new CarState();
-		adjacentCars = new ArrayList<CarState>();
-		relatedStates = new ArrayList<Integer>();
-	}
-	
 
 	public QValues getQValues() {
 		return qValues;
@@ -78,12 +88,12 @@ public class State {
 		this.adjacentCars = adjacentCars;
 	}
 
-	public List<Integer> getRelatedStates() {
-		return relatedStates;
+	public List<String> getRelatedStatesIds() {
+		return relatedStatesIds;
 	}
 
-	public void setRelatedStates(List<Integer> relatedStates) {
-		this.relatedStates = relatedStates;
+	public void setRelatedStatesIds(List<String> relatedStatesIds) {
+		this.relatedStatesIds = relatedStatesIds;
 	}
 
 	public double getQValue(Action action) {
@@ -93,7 +103,7 @@ public class State {
 	public double getMaxQValue(List<Action> possibleActions) {
 		return qValues.getMaxValue(possibleActions);
 	}
-	
+
 	public Action getMaxQValueAction(List<Action> possibleActions) {
 		return qValues.getMaxValueAction(possibleActions);
 	}
@@ -102,11 +112,19 @@ public class State {
 		qValues.setQValue(action, q);
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	// public void setId(String id) {
+	// this.id = id;
+	// }
+
 	public List<Action> getPossibleActions(int numberOfLanes, int speedLimit) {
 		List<Action> actions = new ArrayList<>();
 		actions.add(Action.noAction);
 
-		if (myCar.lane >1 ) {
+		if (myCar.lane > 1) {
 			actions.add(Action.goLeft);
 		}
 
@@ -124,11 +142,11 @@ public class State {
 		return actions;
 	}
 
-	public boolean matchesState(State state) {
-		if(myCar.matchesCarState(state.myCar)) {
-			if(adjacentCars.size() == state.adjacentCars.size()) {
+	private boolean bruteForceMatchState(State state) {
+		if (myCar.matchesCarState(state.myCar)) {
+			if (adjacentCars.size() == state.adjacentCars.size()) {
 				for (int i = 0; i < adjacentCars.size(); i++) {
-					if(!state.carAdjacent(adjacentCars.get(i))) {
+					if (!state.carAdjacent(adjacentCars.get(i))) {
 						return false;
 					}
 				}
@@ -138,21 +156,35 @@ public class State {
 		return false;
 	}
 	
+	private boolean matchState(State state) {
+		if(state.getId().matches(id)) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
 	boolean carAdjacent(CarState car) {
 		for (int i = 0; i < adjacentCars.size(); i++) {
-			if(adjacentCars.get(i).matchesCarState(car)) {
+			if (adjacentCars.get(i).matchesCarState(car)) {
 				return true;
 			}
 		}
-		
+
 		return false;
+	}
+
+	String calculateId(){
+		String s = "" + myCar.lane + myCar.position + myCar.speed;
+		for (int i = 0; i < adjacentCars.size(); i++) {
+			s = s + adjacentCars.get(i).lane + adjacentCars.get(i).position + adjacentCars.get(i).speed;
+		}
+		return s;
 	}
 
 	@Override
 	public String toString() {
 		return "State [myCar=" + myCar + ", AdjacentCars=" + adjacentCars + "]";
 	}
-	
-	
 
 }

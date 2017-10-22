@@ -1,14 +1,16 @@
 package org.systemx.qlearning.state;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.systemx.qlearning.commun.ExpBetaSelector;
 
 public class StatesList {
 
-	private List<State> states = new ArrayList<State>();
+	Map<String, State> states = new HashMap<String, State>();
 
 	private int numberOfLanes;
 	private int speedLimit;
@@ -18,24 +20,20 @@ public class StatesList {
 		this.numberOfLanes = numberOfLanes;
 		this.speedLimit = speedLimit;
 	}
-	
 
 	public StatesList() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-
-	public void addState(State state) {
-		states.add(state);
+	public void addState(String id, State state) {
+		states.put(id, state);
 	}
-	
+
 	public Action getMaxQNextAction(State testState) {
 		State state = testState;
-		for (int i = 0; i < states.size(); i++) {
-			if(states.get(i).matchesState(testState)) {
-				state = states.get(i);
-			}				
+		if(states.containsKey(testState.getId())) {
+			state = states.get(testState.getId());
 		}
 		
 		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
@@ -56,39 +54,23 @@ public class StatesList {
 
 	public State setNextState(State currentState, State testState) {
 
-		if(testState.matchesState(currentState)) {
-			return currentState;
+		if (states.containsKey(testState.getId())) {
+			return states.get(testState.getId());
 		}
 		
-		for (int i = 0; i < currentState.getRelatedStates().size(); i++) {
-			if (testState.matchesState(states.get(currentState.getRelatedStates().get(i)))) {
-				return states.get(currentState.getRelatedStates().get(i));
-			}
-		}
-		
-		for (int i = 0; i < states.size(); i++) {
-			if(states.get(i).matchesState(testState)) {
-				states.get(i).getRelatedStates().add(states.indexOf(currentState));
-				currentState.getRelatedStates().add(i);
-				return states.get(i);
-			}				
-		}
-
 		State nextState = new State(testState);
-		nextState.getRelatedStates().add(states.indexOf(currentState));
-		states.add(nextState);
-		currentState.getRelatedStates().add(states.indexOf(nextState));
+		nextState.getRelatedStatesIds().add(currentState.getId());
+		states.put(nextState.getId(), nextState);
+		currentState.getRelatedStatesIds().add(nextState.getId());
 
 		return nextState;
 	}
-	
-	public State addNextState(State testState) {		
-		for (int i = 0; i < states.size(); i++) {
-			if(states.get(i).matchesState(testState)) {
-				return states.get(i);
-			}				
+
+	public State addNewState(State testState) {
+		if (states.containsKey(testState.getId())) {
+			return states.get(testState.getId());
 		}
-		states.add(testState);
+		states.put(testState.getId(),testState);
 		return testState;
 	}
 
@@ -108,13 +90,12 @@ public class StatesList {
 		this.speedLimit = speedLimit;
 	}
 
-	public List<State> getStates() {
+	public Map<String, State> getStates() {
 		return states;
 	}
 
-	public void setStates(List<State> states) {
+	public void setStates(Map<String, State> states) {
 		this.states = states;
 	}
-
 
 }

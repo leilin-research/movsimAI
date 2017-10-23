@@ -14,8 +14,8 @@ import org.systemx.qlearning.state.StatesListGroup;
 
 public class QLearning {
 
-	private static final double alpha = 0.01; // Learning rate
-	private static final double gamma = 0.99; // Eagerness - 0 looks in the near future, 1 looks in the distant future
+	private static final double alpha = 0.1; // Learning rate
+	private static final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 
 	public static final int numberOfLanes = 3;
 	public static final int speedLimit = 20;
@@ -58,7 +58,7 @@ public class QLearning {
 		}
 
 		State nextState = statesList.setNextState(currentState, realNextState);
-		
+
 		double q = currentState.getQValue(currentAction);
 
 		double maxQ = nextState.getMaxQValue(nextState.getPossibleActions(numberOfLanes, speedLimit));
@@ -71,15 +71,17 @@ public class QLearning {
 		currentState = nextState;
 		currentAction = statesList.predictNextAction(currentState);
 
+		//System.out.println("NextAction:" + currentAction + " Speed:" + currentState.getMyCar().speed);
+		
 		return currentAction;
 	}
 
 	static double getReward() {
 		switch (currentAction) {
 		case goLeft:
-			return 0;
+			return -5;
 		case goRight:
-			return 0;
+			return -5;
 		case incSpeed:
 			return 10;
 		case decSpeed:
@@ -98,7 +100,7 @@ public class QLearning {
 	}
 
 	static public void realTimeCalculateQCrash() {
-		double reward = -1000;
+		double reward = -100000;
 		double q = currentState.getQValue(currentAction);
 
 		double maxQ = 0;
@@ -107,6 +109,8 @@ public class QLearning {
 		double Qvalue = q + alpha * (r + gamma * maxQ - q);
 
 		currentState.setQValue(currentAction, Qvalue);
+		
+		System.err.println("Crash: " + currentAction + ":" + Qvalue);
 
 		realTimeCalculateQReset();
 	}

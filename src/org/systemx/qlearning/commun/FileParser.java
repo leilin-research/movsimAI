@@ -72,12 +72,14 @@ public class FileParser {
 	}
 
 
-	public static void writeFile(String path, StatesList statesList) throws IOException {
+	public static void writeFile(String path, StatesList statesListCopy) throws IOException {
+		StatesList statesList = new StatesList(statesListCopy);
+		
 		File file = new File(path);
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
 		String s = "";
 		System.out.println("Writing statesList");
-		ProgressBar progressBar = new ProgressBar(statesList.getStates().size(),"Writing "+statesList);
+		ProgressBar progressBar = new ProgressBar(statesList.getStates().size(),"Writing statesList");
 		progressBar.setInverse(false);
 
 		out.println(statesList.getNumberOfLanes());

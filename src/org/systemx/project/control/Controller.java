@@ -43,14 +43,13 @@ public class Controller {
 		}
 	}
 
-
 	public static void controlDecision(ProjectVehicle vehicle) {
 
 		if (vcid == vehicle.getId()) {
-			vehicle.setColorObject(Color.red);
+			vehicle.setColorObject(Color.green);
 
 			State state = getCurrentState(vehicle);
-
+			
 			if (vehicleControl.isActionExecuted()) {
 				Action action = qLearning.realTimeCalculateQ(state);
 				//Action action = qLearning.realTimeTestQ(state);
@@ -66,6 +65,17 @@ public class Controller {
 			}
 			
 			vehicleControl.machineControl(vehicle, qLearning.speedLimit);
+		}else {
+			List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
+			for (int i = 0; i < ids.size(); i++) {
+				SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
+				if (sv instanceof ProjectSensedVehicle) {
+					long id = ((ProjectSensedVehicle) sv).getSenderId();
+					if(id ==vcid) {
+						vehicle.setColorObject(Color.white);
+					}
+				}
+			}
 		}
 	}
 

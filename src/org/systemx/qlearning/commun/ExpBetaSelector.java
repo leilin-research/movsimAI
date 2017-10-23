@@ -14,8 +14,6 @@ import org.systemx.qlearning.state.State;
 public class ExpBetaSelector {
 	double beta;
 	
-	boolean TestPrint = false;
-	
 	public ExpBetaSelector(double beta) {
 		super();
 		this.beta = beta;
@@ -23,8 +21,6 @@ public class ExpBetaSelector {
 
 	private double calcActionWeight(QValues qValues, Action action, double maxQ) {
 		if (qValues.actions.contains(action)) {
-			TestPrint = true;
-			System.err.println(action+" Q:" + qValues.getValue(action));
 			return Math.exp(this.beta * (qValues.getValue(action) - maxQ));
 		} else {
 			return Math.exp(this.beta * (0 - maxQ));
@@ -38,13 +34,6 @@ public class ExpBetaSelector {
 
 		for (Action a : possibleActions) {
 			weights.put(a, this.calcActionWeight(state.getQValues(), a , maxQ));
-			if(TestPrint) {
-				System.err.print(a + ":" + weights.get(a) + " ");
-			}
-		}
-		if(TestPrint) {
-			System.err.println();
-			System.err.println("------------------------------------------------------");
 		}
 		return weights;
 	}
@@ -52,6 +41,22 @@ public class ExpBetaSelector {
 	public Action getExpBetaSelectedAction(State state, List<Action> possibleActions) {
 		Random rand = new Random();
 		Map<Action, Double> weights = calcWeights(state, possibleActions);
+		
+//		if(state.getQValues().getQList().size()>0) {
+//			System.err.println("Qv:"+ state.getQValues().serialiseValues());
+//			for (Action a : possibleActions) {
+//				System.err.print(a + ":" + weights.get(a) + " ");
+//			}
+//			System.err.println();
+//			System.err.println("------------------------------------------------------------");	
+//		}else {
+//			System.out.println("Qv:"+ state.getQValues().serialiseValues());
+//			for (Action a : possibleActions) {
+//				System.out.print(a + ":" + weights.get(a) + " ");
+//			}
+//			System.out.println();
+//			System.out.println("------------------------------------------------------------");	
+//		}
 		
 		double sumWeights = 0.0;
 		for (Double weight : weights.values()) {

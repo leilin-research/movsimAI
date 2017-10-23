@@ -21,6 +21,20 @@ public class StatesList {
 		this.speedLimit = speedLimit;
 	}
 
+	public StatesList(StatesList statesList) {
+		super();
+		this.numberOfLanes = statesList.getNumberOfLanes();
+		this.speedLimit = statesList.getSpeedLimit();
+		
+		states = new HashMap<String, State>();
+		
+		List<String> keySet = new ArrayList<String>(statesList.getStates().keySet());
+		
+		for (int i = 0; i < keySet.size(); i++) {
+			states.put(keySet.get(i), new State(statesList.getStates().get(keySet.get(i))));	
+		}
+	}
+	
 	public StatesList() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -40,17 +54,17 @@ public class StatesList {
 		return state.getMaxQValueAction(possibleActions);
 	}
 
-	public Action predictNextActionOld(State state) {
+	public Action predictNextAction(State state) {
 		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
 		ExpBetaSelector selector = new ExpBetaSelector(1);
 		return selector.getExpBetaSelectedAction(state, possibleActions);
 	}
 
-	public Action predictNextAction(State state) {
-		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
-		Random rand = new Random();
-		return possibleActions.get(rand.nextInt(possibleActions.size()));
-	}
+//	public Action predictNextAction(State state) {
+//		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
+//		Random rand = new Random();
+//		return possibleActions.get(rand.nextInt(possibleActions.size()));
+//	}
 
 	public State setNextState(State currentState, State testState) {
 

@@ -88,34 +88,34 @@ public class VehicleControl {
 		if (!actionExecuted) {
 			switch (currentAction) {
 			case goLeft:
-				if(vehicle.getLane() == oldLane) {
+				if (vehicle.getLane() == oldLane) {
 					laneChange = -1;
-				}else if(vehicle.getLane() == oldLane-1){
-					if(vehicle.getContinousLane() % 1 == 0) {
+				} else if (vehicle.getLane() == oldLane - 1) {
+					if (vehicle.getContinousLane() % 1 == 0) {
 						actionExecuted = true;
 					}
 				}
 				break;
 			case goRight:
-				if(vehicle.getLane() == oldLane) {
+				if (vehicle.getLane() == oldLane) {
 					laneChange = 1;
-				}else if(vehicle.getLane() == oldLane+1){
-					if(vehicle.getContinousLane() % 1 == 0) {
+				} else if (vehicle.getLane() == oldLane + 1) {
+					if (vehicle.getContinousLane() % 1 == 0) {
 						actionExecuted = true;
 					}
 				}
 				break;
 			case incSpeed:
-				if(oldSpeed == (int) vehicle.getSpeed()) {
+				if (oldSpeed == (int) vehicle.getSpeed()) {
 					acceleration = 1;
-				}else{
+				} else {
 					actionExecuted = true;
 				}
 				break;
 			case decSpeed:
-				if(oldSpeed == (int) vehicle.getSpeed()) {
+				if (oldSpeed == (int) vehicle.getSpeed()) {
 					acceleration = -1;
-				}else{
+				} else {
 					actionExecuted = true;
 				}
 				break;
@@ -126,17 +126,15 @@ public class VehicleControl {
 			default:
 				break;
 			}
-			
+
 		}
 
-		if(!actionExecuted) {
-			manualControl(vehicle, speedLimit);
-		}
+		manualControl(vehicle, speedLimit);
+
 	}
 
 	public static boolean isActionExecuted() {
 		return actionExecuted;
 	}
-
 
 }

@@ -119,8 +119,8 @@ public class QLearning {
 			
 			System.err.println("Crash: " + currentAction + ":" + Qvalue);
 		}
-		
-		System.err.println("CrashBefore: " + currentAction + ":" + Qvalue);
+		System.err.println("---------------------------------------------");
+		System.err.println("CrashBefore: " + currentAction + ":" + q);
 		currentState.setQValue(currentAction, Qvalue);
 		System.err.println("CrashAfter: " + currentAction + ":" + Qvalue);
 

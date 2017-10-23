@@ -77,12 +77,17 @@ public class QValues {
 	}
 
 	public double getMaxValue(List<Action> possibleActions) {
-		double maxValue = Double.MIN_VALUE;
+		double maxValue = - Double.MAX_VALUE;
 		for (Action possibleAction : possibleActions) {
 			if (actions.contains(possibleAction)) {
 				double tempValue = qList.get(actions.indexOf(possibleAction));
 				if (tempValue > maxValue) {
 					maxValue = tempValue;
+				}
+			}else {
+				double tempValue = 0;
+				if (0 > maxValue) {
+					maxValue = 0;
 				}
 			}
 		}
@@ -94,19 +99,18 @@ public class QValues {
 	}
 
 	public Action getMaxValueAction(List<Action> possibleActions) {
-		double maxValue = Double.MIN_VALUE;
+		double maxValue = - Double.MAX_VALUE;
 		Action maxAction = Action.noAction;
 
-		
 		for (Action possibleAction : possibleActions) {
 			if (actions.contains(possibleAction)) {
 				double tempValue = qList.get(actions.indexOf(possibleAction));
-			}
-		}
-
-		for (Action possibleAction : possibleActions) {
-			if (actions.contains(possibleAction)) {
-				double tempValue = qList.get(actions.indexOf(possibleAction));
+				if (tempValue > maxValue) {
+					maxValue = tempValue;
+					maxAction = possibleAction;
+				}
+			}else {
+				double tempValue = 0;
 				if (tempValue > maxValue) {
 					maxValue = tempValue;
 					maxAction = possibleAction;

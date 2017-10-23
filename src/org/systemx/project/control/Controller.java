@@ -23,7 +23,7 @@ public class Controller {
 	static ProjectVehicle controlledVehicle;
 	static long vcid;
 	static Boolean vcActive;
-	static QLearning qLearning = new QLearning(true);
+	static QLearning qLearning = new QLearning(false);
 
 	public static void checkNewVehicle(ProjectVehicle vehicle) {
 		if (vcActive == null || !vcActive) {

@@ -99,17 +99,30 @@ public class QLearning {
 	}
 
 	static public void realTimeCalculateQCrash() {
-		double reward = -100000;
+
 		double q = currentState.getQValue(currentAction);
-
-		double maxQ = 0;
-		double r = reward;
-
-		double Qvalue = q + alpha * (r + gamma * maxQ - q);
-
-		currentState.setQValue(currentAction, Qvalue);
+		double r = -1000;
+		double Qvalue = q + r;
 		
-		System.err.println("Crash: " + currentAction + ":" + Qvalue);
+		List<Action> actions = currentState.getPossibleActions(numberOfLanes, speedLimit);
+		
+		if(Qvalue<-1999) {
+			String s= "ActionsQList= ";
+			for (Action action : actions) {
+				if(currentState.getQValues().getActions().contains(action)) {
+					s = s + action+ ":" + currentState.getQValue(action) + " ";
+				}else {
+					s = s + action+ ":0.0" + " ";
+				}
+			}
+			System.err.println(s);
+			
+			System.err.println("Crash: " + currentAction + ":" + Qvalue);
+		}
+		
+		System.err.println("CrashBefore: " + currentAction + ":" + Qvalue);
+		currentState.setQValue(currentAction, Qvalue);
+		System.err.println("CrashAfter: " + currentAction + ":" + Qvalue);
 
 		realTimeCalculateQReset();
 	}

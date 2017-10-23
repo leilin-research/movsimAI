@@ -59,20 +59,6 @@ public class MovsimCoreMain {
      * @throws ParserConfigurationException
      */
     public static void main(String[] args) throws JAXBException, SAXException {    	
-    	
-		// joseph =========================
-		mainDraw draw = new mainDraw();
-		VehicleControl vc = new VehicleControl();
-
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				mainFrame frame = new mainFrame(draw, vc);
-				frame.run();
-			}
-		});
-
-		// joseph =========================
-    	
         Locale.setDefault(Locale.US);
 
         // final ProjectMetaData projectMetaData = ProjectMetaData.getInstance();

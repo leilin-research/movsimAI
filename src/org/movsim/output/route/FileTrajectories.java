@@ -43,6 +43,7 @@ import org.movsim.utilities.FileUtils;
 import org.movsim.viewer.ui.charts.model.data.sets.SpaceTimeSpeedDataSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.systemx.qlearning.QLearning;
 
 import com.google.common.base.Preconditions;
 
@@ -134,12 +135,17 @@ public class FileTrajectories extends FileOutputBase implements SimulationTimeSt
         }
     }
 
+   static double timeOffset = 0;
     @Override
     public void timeStep(double dt, double simulationTime, long iterationCount) {
         this.time = simulationTime;
         if (isLargerThanStartTimeInterval() && isSmallerThanEndTimeInterval()) {
             if (iterationCount % 1000 == 0) {
             	//joseph
+            	if((simulationTime - timeOffset) > 10000) {
+            		timeOffset = simulationTime;
+        	        QLearning.SaveList();
+            	}
                 logger.info("time = {}, timestep= {}", time, dt);
             }
             if ((time - lastUpdateTime + MovsimConstants.SMALL_VALUE) >= traj.getDt()) {

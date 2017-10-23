@@ -32,7 +32,6 @@ public class QLearning {
 	public QLearning(Boolean loadFile) {
 		super();
 		if (loadFile) {
-
 			try {
 				System.out.println("Load Started!");
 				statesList = StatesListGroup.read(savePath);

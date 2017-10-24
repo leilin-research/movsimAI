@@ -21,14 +21,14 @@ public class mainTest {
 		});
 		
 		while (true) {
-			System.out.println(vc.acceleration);
-			System.out.println(vc.laneChange);
+			System.out.println(vc.accelerationControl);
+			System.out.println(vc.laneChangeControl);
 			
-			if(vc.acceleration>0) {
-				vc.acceleration --;
+			if(vc.accelerationControl>0) {
+				vc.accelerationControl --;
 			}
-			if(vc.acceleration<0) {
-				vc.acceleration ++;
+			if(vc.accelerationControl<0) {
+				vc.accelerationControl ++;
 			}
 		}
 	}

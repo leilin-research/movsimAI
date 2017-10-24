@@ -32,12 +32,13 @@ public class FileParser {
 		
 		int numberOfLanes = Integer.parseInt(lines.get(0));
 		int speedLimit = Integer.parseInt(lines.get(1));
+		boolean withMisb = Boolean.parseBoolean(lines.get(2));
 		
-		StatesList stateList = new StatesList(numberOfLanes, speedLimit);
+		StatesList stateList = new StatesList(numberOfLanes, speedLimit, withMisb);
 		
-		long reli =0;
+		long reli = 0;
 
-		for (int i = 2; i < lines.size(); i++) {
+		for (int i = 3; i < lines.size(); i++) {
 			QValues qValuesTemp = new QValues();
 			CarState myCarTemp = new CarState();
 			List<CarState> AdjacentCarsTemp = new ArrayList<CarState>();
@@ -87,6 +88,7 @@ public class FileParser {
 
 		out.println(statesList.getNumberOfLanes());
 		out.println(statesList.getSpeedLimit());
+		out.println(statesList.isWithMisb());
 		
 		List<String> keySet = new ArrayList<String>(statesList.getStates().keySet());
 		

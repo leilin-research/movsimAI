@@ -25,12 +25,12 @@ public class State {
 		for (int i = 0; i < state.adjacentCars.size(); i++) {
 			adjacentCars.add(new CarState(state.adjacentCars.get(i)));
 		}
-		
+
 		for (int i = 0; i < state.relatedStatesIds.size(); i++) {
 			relatedStatesIds.add(state.relatedStatesIds.get(i));
 		}
 	}
-	
+
 	public State(CarState myCar, List<CarState> adjacentCars) {
 		super();
 		this.qValues = new QValues();
@@ -124,17 +124,17 @@ public class State {
 	// this.id = id;
 	// }
 
-	public List<Action> getPossibleActions(int numberOfLanes, int speedLimit) {
+	public List<Action> getPossibleActions(int numberOfLanes, int speedLimit, boolean withMisb) {
 		List<Action> actions = new ArrayList<>();
 		actions.add(Action.noAction);
 
 		if (myCar.lane > 1) {
 			actions.add(Action.goLeft);
 		}
-		
+
 		if (myCar.speed > 0) {
 			actions.add(Action.decSpeed);
-			
+
 			if (myCar.lane < numberOfLanes) {
 				actions.add(Action.goRight);
 			}
@@ -143,6 +143,33 @@ public class State {
 				actions.add(Action.incSpeed);
 			}
 
+		}
+		if (withMisb) {
+			boolean misbRight = false;
+			boolean misbLeft = false;
+			boolean misbFront = false;
+
+			for (CarState adjCar : adjacentCars) {
+				if (adjCar.lane < myCar.lane && adjCar.position>-10) {
+					misbLeft = true;
+				}
+				if (adjCar.lane > myCar.lane && adjCar.position>-10) {
+					misbRight = true;
+				}
+				if (adjCar.lane == myCar.lane && adjCar.position>=0) {
+					misbFront = true;
+				}
+			}
+
+			if (misbFront) {
+				actions.add(Action.misbFront);
+			}
+			if (misbLeft) {
+				actions.add(Action.misbLeft);
+			}
+			if (misbRight) {
+				actions.add(Action.misbRight);
+			}
 		}
 		return actions;
 	}
@@ -160,11 +187,11 @@ public class State {
 		}
 		return false;
 	}
-	
+
 	private boolean matchState(State state) {
-		if(state.getId().matches(id)) {
+		if (state.getId().matches(id)) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
@@ -179,7 +206,7 @@ public class State {
 		return false;
 	}
 
-	String calculateId(){
+	String calculateId() {
 		String s = "" + myCar.lane + myCar.position + myCar.speed;
 		for (int i = 0; i < adjacentCars.size(); i++) {
 			s = s + adjacentCars.get(i).lane + adjacentCars.get(i).position + adjacentCars.get(i).speed;

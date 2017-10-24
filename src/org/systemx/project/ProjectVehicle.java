@@ -96,6 +96,7 @@ public class ProjectVehicle extends Vehicle {
 			}
 			intensity = intensity / 5;
 			setColorObject(Color.getHSBColor((float) 0.4705882352941176, (float) 1.0, (float) intensity));
+			setColorObject(Color.blue);
 		}
 
 		sendMessage(new CamMessage(getId(), getFrontPosition(), getLane(), getSpeed(), getAcc()));
@@ -104,14 +105,21 @@ public class ProjectVehicle extends Vehicle {
 		getCommunicatingVehicles().clear();
 	}
 
-	public void modifyDesiredSpeed(double ns) {
+	public void modifyDesiredSpeed(double ns, boolean manual) {
 		if (this.longitudinalModel instanceof IDM) {
 			IDM IDMModel = (IDM) this.longitudinalModel;
-			IDMModel.setDesiredSpeed(ns,true);
+			IDMModel.setDesiredSpeed(ns,manual);
 		}
 	}
 	
 	public void resetDesiredSpeed() {
+		if (this.longitudinalModel instanceof IDM) {
+			IDM IDMModel = (IDM) this.longitudinalModel;
+			IDMModel.setDesiredSpeed(getDesiredSpeed());
+		}
+	}
+	
+	public void resetDesiredSpeedToLimit() {
 		if (this.longitudinalModel instanceof IDM) {
 			IDM IDMModel = (IDM) this.longitudinalModel;
 			IDMModel.setDesiredSpeed(getSpeedlimit());

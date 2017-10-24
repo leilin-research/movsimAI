@@ -1,80 +1,78 @@
 package org.systemx.project.control;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.systemx.project.BehaviorEnum;
+import org.systemx.project.CamMessage;
+import org.systemx.project.ProjectSensedVehicle;
 import org.systemx.project.ProjectVehicle;
 import org.systemx.qlearning.state.Action;
 
+import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
+
 public class VehicleControl {
 
-	public static int acceleration;
-	public static int laneChange;
+	public static int accelerationControl;
+	public static int laneChangeControl;
+	
+	public static boolean CamAttackControl;
+	public static int CamAttackLaneControl;
+	
+	List<Long> targetIds;
 
 	static boolean actionExecuted;
 	static Action currentAction;
 	static int oldLane;
 	static int oldSpeed;
 
+
 	public VehicleControl() {
 		super();
-		acceleration = 0;
-		laneChange = 0;
+		accelerationControl = 0;
+		laneChangeControl = 0;
+		CamAttackControl = false;
+		CamAttackLaneControl = 0;
+
 		actionExecuted = true;
 		oldLane = 0;
 		oldSpeed = 0;
+		
+		targetIds = new ArrayList<Long>();
 	}
 
 	public void moveRight() {
-		laneChange = 1;
+		laneChangeControl = 1;
 	}
 
 	public void moveLeft() {
-		laneChange = -1;
+		laneChangeControl = -1;
 	}
 
 	public void moveDown() {
-		acceleration = -1;
+		accelerationControl = -1;
 	}
 
 	public void moveUp() {
-		acceleration = 1;
+		accelerationControl = 1;
+	}
+	
+	public void camAttackFront() {
+		CamAttackControl = true;
+		CamAttackLaneControl = 0;
+	}
+	public void camAttackRight() {
+		CamAttackControl = true;
+		CamAttackLaneControl = 1;
+	}
+	public void camAttackLeft() {
+		CamAttackControl = true;
+		CamAttackLaneControl = -1;
 	}
 
 	@Override
 	public String toString() {
-		return "vehicleControl [acceleration=" + acceleration + " lane=" + laneChange + "]";
-	}
-
-	void manualControl(ProjectVehicle vehicle, int speedLimit) {
-		if (acceleration == 1) {
-			if (vehicle.getSpeed() < speedLimit) {
-				vehicle.modifyDesiredSpeed(speedLimit);
-			} else {
-				vehicle.modifyDesiredSpeed(0);
-			}
-			acceleration = 0;
-		} else if (acceleration == -1) {
-			if (vehicle.getSpeed() > 0) {
-				vehicle.modifyDesiredSpeed(0.000000001);
-			}
-			acceleration = 0;
-		} else {
-			vehicle.modifyDesiredSpeed(0);
-		}
-
-		if (laneChange < 0) {
-			laneChange = 0;
-			if (vehicle.getContinousLane() % 1 == 0) {
-				if (vehicle.getLane() > 0) {
-					vehicle.modifiedDesiredLane(BehaviorEnum.rightToleft);
-				}
-			}
-		}
-		if (laneChange > 0) {
-			laneChange = 0;
-			if (vehicle.getContinousLane() % 1 == 0) {
-				vehicle.modifiedDesiredLane(BehaviorEnum.leftToright);
-			}
-		}
+		return "vehicleControl [acceleration=" + accelerationControl + " lane=" + laneChangeControl + "]";
 	}
 
 	public void executeAction(Action action, ProjectVehicle vehicle) {
@@ -89,7 +87,7 @@ public class VehicleControl {
 			switch (currentAction) {
 			case goLeft:
 				if (vehicle.getLane() == oldLane) {
-					laneChange = -1;
+					laneChangeControl = -1;
 				} else if (vehicle.getLane() == oldLane - 1) {
 					if (vehicle.getContinousLane() % 1 == 0) {
 						actionExecuted = true;
@@ -98,7 +96,7 @@ public class VehicleControl {
 				break;
 			case goRight:
 				if (vehicle.getLane() == oldLane) {
-					laneChange = 1;
+					laneChangeControl = 1;
 				} else if (vehicle.getLane() == oldLane + 1) {
 					if (vehicle.getContinousLane() % 1 == 0) {
 						actionExecuted = true;
@@ -107,14 +105,14 @@ public class VehicleControl {
 				break;
 			case incSpeed:
 				if (oldSpeed == (int) vehicle.getSpeed()) {
-					acceleration = 1;
+					accelerationControl = 1;
 				} else {
 					actionExecuted = true;
 				}
 				break;
 			case decSpeed:
 				if (oldSpeed == (int) vehicle.getSpeed()) {
-					acceleration = -1;
+					accelerationControl = -1;
 				} else {
 					actionExecuted = true;
 				}
@@ -122,18 +120,114 @@ public class VehicleControl {
 			case noAction:
 				actionExecuted = true;
 				break;
-
+			case misbFront:
+				camAttackFront();
+				actionExecuted = true;
+				break;
+			case misbRight:
+				camAttackRight();
+				actionExecuted = true;
+				break;
+			case misbLeft:
+				camAttackLeft();
+				actionExecuted = true;
+				break;
 			default:
+				actionExecuted = true;
 				break;
 			}
+		}
+		
+		System.out.println("targetIds:" +targetIds);
+		
+		manualControl(vehicle, speedLimit);
+	}
 
+	void manualControl(ProjectVehicle vehicle, int speedLimit) {
+		if (accelerationControl == 1) {
+			if (vehicle.getSpeed() < speedLimit) {
+				vehicle.modifyDesiredSpeed(speedLimit, true);
+			} else {
+				vehicle.modifyDesiredSpeed(0, true);
+			}
+			accelerationControl = 0;
+		} else if (accelerationControl == -1) {
+			if (vehicle.getSpeed() > 0) {
+				vehicle.modifyDesiredSpeed(0.000000001, true);
+			}
+			accelerationControl = 0;
+		} else {
+			vehicle.modifyDesiredSpeed(0, true);
 		}
 
-		manualControl(vehicle, speedLimit);
+		if (laneChangeControl < 0) {
+			laneChangeControl = 0;
+			if (vehicle.getContinousLane() % 1 == 0) {
+				if (vehicle.getLane() > 0) {
+					vehicle.modifiedDesiredLane(BehaviorEnum.rightToleft);
+				}
+			}
+		}
+		if (laneChangeControl > 0) {
+			laneChangeControl = 0;
+			if (vehicle.getContinousLane() % 1 == 0) {
+				vehicle.modifiedDesiredLane(BehaviorEnum.leftToright);
+			}
+		}
+		
+		
+		if(CamAttackControl) {			
+			CamAttackControl = false;
+			findTargetCar(vehicle, CamAttackLaneControl);
+			sendFaultyCams(vehicle);
+		}
+		
+	}
+
+	private void findTargetCar(ProjectVehicle vehicle, int targetLane) {
+		double targetPosition = -Integer.MAX_VALUE;
+		long targetId = -1;
+		List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
+		for (int i = 0; i < ids.size(); i++) {
+			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
+			if (sv instanceof ProjectSensedVehicle) {
+				int lane = ((ProjectSensedVehicle) sv).getSenderLane();
+				double position = ((ProjectSensedVehicle) sv).getSenderPosition();
+				if (lane == targetLane) {
+					if (targetPosition < position) {
+						targetPosition = position;
+						targetId = ids.get(i);
+					}
+				}
+			}
+		}
+
+		if(targetId!=-1) {
+			if (!targetIds.contains(targetId)) {
+				targetIds.add(targetId);
+			}
+		}
+	}
+
+	private void sendFaultyCams(ProjectVehicle vehicle) {
+		for (long targetId : targetIds) {
+			if (vehicle.getCommunicatingVehicles().containsKey(targetId)) {
+				SensedVehicle sv = vehicle.getCommunicatingVehicles().get(targetId);
+				if (sv instanceof ProjectSensedVehicle) {
+					int targetLane = ((ProjectSensedVehicle) sv).getSenderLane();
+					double targetPosition = ((ProjectSensedVehicle) sv).getSenderPosition();
+					double targetSpeed = ((ProjectSensedVehicle) sv).getSenderSpeed();
+					vehicle.sendMessage(new CamMessage(vehicle.getId(), targetPosition + 5, targetLane, targetSpeed - 5,
+							targetId));
+				}
+			}else {
+				targetIds.remove(targetId);
+			}
+		}
 
 	}
 
-	public static boolean isActionExecuted() {
+	public boolean isActionExecuted() {
 		return actionExecuted;
 	}
 

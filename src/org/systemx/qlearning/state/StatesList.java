@@ -14,17 +14,20 @@ public class StatesList {
 
 	private int numberOfLanes;
 	private int speedLimit;
+	private boolean withMisb;
 
-	public StatesList(int numberOfLanes, int speedLimit) {
+	public StatesList(int numberOfLanes, int speedLimit, boolean withMisb) {
 		super();
 		this.numberOfLanes = numberOfLanes;
 		this.speedLimit = speedLimit;
+		this.withMisb = withMisb;
 	}
 
 	public StatesList(StatesList statesList) {
 		super();
 		this.numberOfLanes = statesList.getNumberOfLanes();
 		this.speedLimit = statesList.getSpeedLimit();
+		this.withMisb = statesList.isWithMisb();
 
 		states = new HashMap<String, State>();
 
@@ -50,12 +53,12 @@ public class StatesList {
 			state = states.get(testState.getId());
 		}
 
-		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
+		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit, withMisb);
 		return state.getMaxQValueAction(possibleActions);
 	}
 
 	public Action predictNextAction(State state) {
-		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
+		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit, withMisb);
 		ExpBetaSelector selector = new ExpBetaSelector(1);
 		return selector.getExpBetaSelectedAction(state, possibleActions);
 	}
@@ -69,7 +72,7 @@ public class StatesList {
 				Action maxAction = null;
 				Double maxQ = - Double.MAX_VALUE;
 				for (String StateId: adjacentStates) {
-					List<Action> possibleActions = states.get(StateId).getPossibleActions(numberOfLanes, speedLimit);
+					List<Action> possibleActions = states.get(StateId).getPossibleActions(numberOfLanes, speedLimit, withMisb);
 					Double localMaxQ = states.get(StateId).getMaxQValue(possibleActions);
 					if(localMaxQ > maxQ) {
 						maxQ = localMaxQ;
@@ -142,7 +145,7 @@ public class StatesList {
 	}
 
 	public Action predictRandomNextAction(State state) {
-		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit);
+		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit, withMisb);
 		Random rand = new Random();
 		return possibleActions.get(rand.nextInt(possibleActions.size()));
 	}
@@ -198,5 +201,15 @@ public class StatesList {
 	public void setStates(Map<String, State> states) {
 		this.states = states;
 	}
+
+	public boolean isWithMisb() {
+		return withMisb;
+	}
+
+	public void setWithMisb(boolean withMisb) {
+		this.withMisb = withMisb;
+	}
+	
+	
 
 }

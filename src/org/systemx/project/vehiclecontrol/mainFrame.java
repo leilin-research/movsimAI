@@ -27,6 +27,12 @@ public class mainFrame extends JFrame implements KeyListener {
 			vc.moveUp();
 		}else if (e.getKeyCode() == KeyEvent.VK_S) {
 			QLearning.SaveList();
+		}else if (e.getKeyCode() == KeyEvent.VK_A) {
+			vc.camAttackLeft();
+		}else if (e.getKeyCode() == KeyEvent.VK_Z) {
+			vc.camAttackFront();
+		}else if (e.getKeyCode() == KeyEvent.VK_E) {
+			vc.camAttackRight();
 		}
 	}
 

@@ -1,12 +1,6 @@
 package org.systemx.qlearning;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import org.systemx.qlearning.state.Action;
 import org.systemx.qlearning.state.State;
 import org.systemx.qlearning.state.StatesList;
@@ -17,30 +11,38 @@ public class QLearning {
 	private static final double alpha = 0.1; // Learning rate
 	private static final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 
+	public static final boolean loadFile = true;
+	
 	public static final int numberOfLanes = 3;
 	public static final int speedLimit = 20;
-
+	public static final boolean withMisb = false;
+	
+	private static boolean Initialized = false;
+	
 	private static StatesList statesList;
 
 	private static State currentState;
 	private static Action currentAction;
 
-	private static boolean Initialized = false;
-
 	private static String savePath = "./Qdata/QSave.q";
 
-	public QLearning(Boolean loadFile) {
+	public QLearning() {
 		super();
 		if (loadFile) {
 			try {
 				System.out.println("Load Started!");
 				statesList = StatesListGroup.read(savePath);
 				System.out.println("Load Complete!");
+				
+				statesList.setNumberOfLanes(numberOfLanes);
+				statesList.setSpeedLimit(speedLimit);
+				statesList.setWithMisb(withMisb);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else {
-			statesList = new StatesList(numberOfLanes, speedLimit);
+			statesList = new StatesList(numberOfLanes, speedLimit, withMisb);
 		}
 	}
 
@@ -60,7 +62,8 @@ public class QLearning {
 
 		double q = currentState.getQValue(currentAction);
 
-		double maxQ = nextState.getMaxQValue(nextState.getPossibleActions(numberOfLanes, speedLimit));
+		double maxQ = nextState.getMaxQValue(nextState.getPossibleActions(statesList.getNumberOfLanes(),
+				statesList.getSpeedLimit(), statesList.isWithMisb()));
 		double r = getReward();
 		double Qvalue = q + alpha * (r + gamma * maxQ - q);
 
@@ -87,6 +90,12 @@ public class QLearning {
 			return -10;
 		case noAction:
 			return 0;
+		case misbFront:
+			return 0;
+		case misbLeft:
+			return 0;
+		case misbRight:
+			return 0;
 		default:
 			return 0;
 		}
@@ -103,7 +112,8 @@ public class QLearning {
 		double r = -1000;
 		double Qvalue = q + r;
 
-		List<Action> actions = currentState.getPossibleActions(numberOfLanes, speedLimit);
+		List<Action> actions = currentState.getPossibleActions(statesList.getNumberOfLanes(),
+				statesList.getSpeedLimit(), statesList.isWithMisb());
 
 		if (Qvalue < -2000) {
 			String s = "ActionsQList= ";

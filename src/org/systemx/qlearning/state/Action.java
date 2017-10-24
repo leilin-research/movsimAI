@@ -5,5 +5,8 @@ public enum Action {
 	goRight,
 	decSpeed,
 	incSpeed,
-	noAction
+	noAction,
+	misbLeft,
+	misbFront,
+	misbRight
 }

@@ -133,13 +133,16 @@ public class IDM extends LongitudinalModelBase {
 		final double localV0;
 		if (me.getSpeedlimit() != 0.0 && param.getS1()!=-99) {
 			localV0 = Math.min(alphaV0 * getDesiredSpeed(), me.getSpeedlimit());
+			if(param.getS1()==-98) {
+				final double localA = alphaA * param.getA();
+				return acc(1, v, dv, localT, localV0, localA);
+			}
 		} else {
 			localV0 = alphaV0 * getDesiredSpeed();
 		}
+		
 		final double localA = alphaA * param.getA();
-
 		return acc(s, v, dv, localT, localV0, localA);
-
 	}
 
 	@Override
@@ -196,8 +199,14 @@ public class IDM extends LongitudinalModelBase {
 	}
 
 	public void setDesiredSpeed(double desiredSpeed, boolean manualControl) {
-		this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT()-100,
-				this.param.getS0(), -99);
+		if(manualControl) {
+			this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT()-100,
+					this.param.getS0(), -99);
+		}else {
+			this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT(),
+					this.param.getS0(), -98);
+		}
+
 	}
 
 }

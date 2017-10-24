@@ -1,5 +1,6 @@
 package org.systemx.qlearning.state;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,6 +56,22 @@ public class CarState {
 		this.lane = Integer.parseInt(lane);
 		this.position = Integer.parseInt(position);
 		this.speed = Integer.parseInt(speed);
+	}
+
+	public List<CarState> possibleAdj(int numberOfLanes, int speedLimit, boolean main) {
+		List<CarState> list = new ArrayList<CarState>();
+		if(!main) {
+			list.add(new CarState(lane, position + 1, speed));
+			list.add(new CarState(lane, position - 1, speed));
+		}
+		if(speed<speedLimit) {
+			list.add(new CarState(lane, position, speed+1));
+		}
+		if(speed>0) {			
+			list.add(new CarState(lane, position, speed-1));
+		}
+
+		return list;
 	}
 
 }

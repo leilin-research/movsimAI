@@ -62,16 +62,16 @@ public class QLearning {
 
 		double maxQ = nextState.getMaxQValue(nextState.getPossibleActions(numberOfLanes, speedLimit));
 		double r = getReward();
-
 		double Qvalue = q + alpha * (r + gamma * maxQ - q);
 
 		currentState.setQValue(currentAction, Qvalue);
 
 		currentState = nextState;
-		currentAction = statesList.predictNextAction(currentState);
+		currentAction = statesList.predictSmartNextAction(currentState);
 
-		//System.out.println("NextAction:" + currentAction + " Speed:" + currentState.getMyCar().speed);
-		
+		// System.out.println("NextAction:" + currentAction + " Speed:" +
+		// currentState.getMyCar().speed);
+
 		return currentAction;
 	}
 
@@ -99,30 +99,26 @@ public class QLearning {
 	}
 
 	static public void realTimeCalculateQCrash() {
-
 		double q = currentState.getQValue(currentAction);
 		double r = -1000;
 		double Qvalue = q + r;
-		
+
 		List<Action> actions = currentState.getPossibleActions(numberOfLanes, speedLimit);
-		
-		if(Qvalue<-1999) {
-			String s= "ActionsQList= ";
+
+		if (Qvalue < -2000) {
+			String s = "ActionsQList= ";
 			for (Action action : actions) {
-				if(currentState.getQValues().getActions().contains(action)) {
-					s = s + action+ ":" + currentState.getQValue(action) + " ";
-				}else {
-					s = s + action+ ":0.0" + " ";
+				if (currentState.getQValues().getActions().contains(action)) {
+					s = s + action + ":" + currentState.getQValue(action) + " ";
+				} else {
+					s = s + action + ":0.0" + " ";
 				}
 			}
 			System.err.println(s);
-			
-			System.err.println("Crash: " + currentAction + ":" + Qvalue);
 		}
-		System.err.println("---------------------------------------------");
-		System.err.println("CrashBefore: " + currentAction + ":" + q);
+		System.err.println("Crash " + currentAction + " " + currentState.getQValues().getQList().size() + "/"
+				+ actions.size() + " :" + q + "/" + Qvalue);
 		currentState.setQValue(currentAction, Qvalue);
-		System.err.println("CrashAfter: " + currentAction + ":" + Qvalue);
 
 		realTimeCalculateQReset();
 	}

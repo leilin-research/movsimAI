@@ -57,6 +57,11 @@ public class ExpBetaSelector {
 		for (Action action : possibleActions) {
 			selnum -= weights.get(action);
 			if (selnum <= 0.0) {
+//				if(state.getMaxQValue(possibleActions) == state.getQValue(action)) {
+//					System.out.println("===============================BEST");
+//				}else {
+//					System.err.println("===============================NOTBEST");
+//				}
 				return action;
 			}
 		}

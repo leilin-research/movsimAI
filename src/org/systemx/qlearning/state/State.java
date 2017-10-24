@@ -25,6 +25,10 @@ public class State {
 		for (int i = 0; i < state.adjacentCars.size(); i++) {
 			adjacentCars.add(new CarState(state.adjacentCars.get(i)));
 		}
+		
+		for (int i = 0; i < state.relatedStatesIds.size(); i++) {
+			relatedStatesIds.add(state.relatedStatesIds.get(i));
+		}
 	}
 	
 	public State(CarState myCar, List<CarState> adjacentCars) {

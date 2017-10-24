@@ -150,9 +150,15 @@ public class StatesList {
 	public State setNextState(State currentState, State testState) {
 
 		if (states.containsKey(testState.getId())) {
+			if(!currentState.getRelatedStatesIds().contains(testState.getId())) {
+				currentState.getRelatedStatesIds().add(testState.getId());
+			}
+			if(!testState.getRelatedStatesIds().contains(currentState.getId())) {
+				testState.getRelatedStatesIds().add(currentState.getId());
+			}
 			return states.get(testState.getId());
 		}
-
+		
 		State nextState = new State(testState);
 		nextState.getRelatedStatesIds().add(currentState.getId());
 		states.put(nextState.getId(), nextState);

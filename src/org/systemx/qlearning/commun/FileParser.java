@@ -34,6 +34,8 @@ public class FileParser {
 		int speedLimit = Integer.parseInt(lines.get(1));
 		
 		StatesList stateList = new StatesList(numberOfLanes, speedLimit);
+		
+		long reli =0;
 
 		for (int i = 2; i < lines.size(); i++) {
 			QValues qValuesTemp = new QValues();
@@ -48,6 +50,7 @@ public class FileParser {
 			if(!splitList.get(2).isEmpty()) {
 				String[] relatedStatesString = splitList.get(2).split("_");	
 				for (int j = 0; j < relatedStatesString.length; j++) {
+					reli++;
 					relatedStatesIds.add(relatedStatesString[j]);
 				}
 			}
@@ -65,7 +68,7 @@ public class FileParser {
 			progressBar.update(i);
 		}
 		System.out.println();
-		System.out.println("Parsing StatesList done!");
+		System.out.println("Parsing StatesList done! " + reli);
 		System.out.println();
 		
 		return stateList;
@@ -87,6 +90,11 @@ public class FileParser {
 		
 		List<String> keySet = new ArrayList<String>(statesList.getStates().keySet());
 		
+		long reli =0;
+		int maxrel= 0;
+		int zerorel= 0;
+		int nonzerorel= 0;
+		
 		for (int i = 0; i < keySet.size(); i++) {
 			State tempState = statesList.getStates().get(keySet.get(i));
 			s = "";
@@ -97,11 +105,21 @@ public class FileParser {
 			s = s + ";";
 			
 			for (int j = 0; j < tempState.getRelatedStatesIds().size(); j++) {
+				reli ++;
 				s = s + tempState.getRelatedStatesIds().get(j);
 				if(j<tempState.getRelatedStatesIds().size() - 1) {
 					s = s + "_";	
 				}
 			}
+			if(maxrel<tempState.getRelatedStatesIds().size()) {
+				maxrel = tempState.getRelatedStatesIds().size();
+			}
+			if(tempState.getRelatedStatesIds().size() == 0) {
+				zerorel ++ ;
+			}else {
+				nonzerorel++; 
+			}
+			
 			s = s + ";";
 			
 			s = s + tempState.getMyCar().serialiseValue();
@@ -117,7 +135,7 @@ public class FileParser {
 		}
 		
 		System.out.println();
-		System.out.println("Writing statesList done!");
+		System.out.println("Writing statesList done! total:" + reli + " max:" +  maxrel + " zero:" + zerorel +":" + nonzerorel);
 		System.out.println();
 		out.close();
 	}

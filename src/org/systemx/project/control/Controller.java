@@ -65,7 +65,7 @@ public class Controller {
 				return;
 			}
 			
-			vehicleControl.machineControl(vehicle, QLearning.speedLimit);
+			vehicleControl.machineControl(vehicle, QLearning.numberOfLanes, QLearning.speedLimit);
 		}else {
 			otherCarsDecision(vehicle);
 		}
@@ -85,8 +85,6 @@ public class Controller {
 		boolean frontCarTooClose = false;
 		boolean rearCarTooClose = false;
 		
-		boolean cheatId = false;
-		
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
 			if (sv instanceof ProjectSensedVehicle) {
@@ -96,10 +94,7 @@ public class Controller {
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
 				long acc = (long) ((ProjectSensedVehicle) sv).getSenderAcceleration();
 				
-				if(acc == vehicle.getId()) {
-					cheatId = true;
-				}
-				
+
 				if(lane == vehicle.getLane()) {
 					if(position > 0 && position < 5) {
 						if(speed < vehicle.getSpeed()) {
@@ -122,13 +117,6 @@ public class Controller {
 			vehicle.resetDesiredSpeedToLimit();
 		}
 		
-		if(cheatId && !frontCarTooClose) {
-			for (int i = 0; i < ids.size(); i++) {
-				SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
-				System.out.println("CheatId:" + sv);
-			}
-			System.exit(0);
-		}
 	}
 	
 	private static State getCurrentState(ProjectVehicle vehicle) {

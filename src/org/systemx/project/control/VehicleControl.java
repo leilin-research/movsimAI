@@ -262,7 +262,7 @@ public class VehicleControl {
 	private void sendFaultyCams(ProjectVehicle vehicle) {
 		
 		for (int i = 0; i < targetIds.size(); i++) {
-			if (targetTimeout.get(targetIds.get(i)) > timeoutIterations * 2) {
+			if (targetTimeout.get(targetIds.get(i)) > timeoutIterations * 3) {
 				targetTimeout.remove(targetIds.get(i));
 				targetIds.remove(i);
 				i--;

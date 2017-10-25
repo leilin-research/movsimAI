@@ -1,12 +1,10 @@
 package org.systemx.qlearning.commun;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.systemx.qlearning.QLearning;
 import org.systemx.qlearning.state.Action;
 import org.systemx.qlearning.state.QValues;
 import org.systemx.qlearning.state.State;

@@ -136,7 +136,7 @@ public class ProjectVehicle extends Vehicle {
 			emergencyBrakingHappened = false;
 			if (this.longitudinalModel instanceof IDM) {
 				IDM IDMModel = (IDM) this.longitudinalModel;
-				IDMModel.setDesiredSpeed(oldSpeed);
+				IDMModel.setDesiredSpeed(oldSpeed, true);
 			}
 		}
 	}

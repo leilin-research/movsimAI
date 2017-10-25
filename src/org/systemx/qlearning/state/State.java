@@ -128,22 +128,22 @@ public class State {
 		List<Action> actions = new ArrayList<>();
 		actions.add(Action.noAction);
 
-		if (myCar.lane > 1) {
-			actions.add(Action.goLeft);
+		if (myCar.speed < speedLimit) {
+			actions.add(Action.incSpeed);
 		}
 
 		if (myCar.speed > 0) {
 			actions.add(Action.decSpeed);
+			
+			if (myCar.lane > 1) {
+				actions.add(Action.goLeft);
+			}
 
 			if (myCar.lane < numberOfLanes) {
 				actions.add(Action.goRight);
 			}
-
-			if (myCar.speed < speedLimit) {
-				actions.add(Action.incSpeed);
-			}
-
 		}
+		
 		if (withMisb) {
 			boolean misbRight = false;
 			boolean misbLeft = false;

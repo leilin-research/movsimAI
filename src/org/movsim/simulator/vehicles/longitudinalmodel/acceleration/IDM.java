@@ -199,13 +199,13 @@ public class IDM extends LongitudinalModelBase {
 	}
 
 	public void setDesiredSpeed(double desiredSpeed, boolean manualControl) {
-		if(manualControl) {
+//		if(manualControl) {
 			this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT()-100,
 					this.param.getS0(), -99);
-		}else {
-			this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT(),
-					this.param.getS0(), -98);
-		}
+//		}else {
+//			this.param = create(desiredSpeed, this.param.getA(), this.param.getB(), this.param.getT(),
+//					this.param.getS0(), -98);
+//		}
 
 	}
 

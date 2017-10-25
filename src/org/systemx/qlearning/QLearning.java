@@ -25,7 +25,7 @@ public class QLearning {
 	private static Action currentAction;
 
 	private static String loadPath = "./Qdata/QSave.q";
-	private static String savePath = "./Qdata/QSave.q";
+	private static String savePath = "./Qdata/QSave.q.save";
 
 	public QLearning() {
 		super();

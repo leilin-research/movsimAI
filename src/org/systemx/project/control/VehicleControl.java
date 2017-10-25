@@ -145,18 +145,18 @@ public class VehicleControl {
 	void manualControl(ProjectVehicle vehicle, int numberOfLanes, int speedLimit) {
 		if (accelerationControl == 1) {
 			if (vehicle.getSpeed() < speedLimit) {
-				vehicle.modifyDesiredSpeed(speedLimit, true);
+				vehicle.modifyDesiredSpeed(speedLimit, true, false);
 			} else {
-				vehicle.modifyDesiredSpeed(0, true);
+				vehicle.modifyDesiredSpeed(0, true, false);
 			}
 			accelerationControl = 0;
 		} else if (accelerationControl == -1) {
 			if (vehicle.getSpeed() > 0) {
-				vehicle.modifyDesiredSpeed(0.000000001, true);
+				vehicle.modifyDesiredSpeed(0.000000001, true, false);
 			}
 			accelerationControl = 0;
 		} else {
-			vehicle.modifyDesiredSpeed(0, true);
+			vehicle.modifyDesiredSpeed(0, true, false);
 		}
 
 		if (laneChangeControl < 0) {

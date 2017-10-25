@@ -15,20 +15,29 @@ import fr.ifsttar.licit.simulator.agents.perception.vehicles.VehicleSelfPercepti
 public class ProjectVehicle extends Vehicle {
 
 	LaneChangeDecision manualLaneChange = LaneChangeDecision.NONE;
+	
+	double oldSpeed;
+	boolean emergencyBrakingHappened;
 
 	public ProjectVehicle(String label, LongitudinalModelBase accelerationModel,
 			VehiclePrototypeConfiguration configuration, LaneChangeModel laneChangeModel) {
 		super(label, accelerationModel, configuration, laneChangeModel);
+		oldSpeed = 0;
+		emergencyBrakingHappened = false;
 		Controller.checkNewVehicle(this);
 	}
 
 	public ProjectVehicle(Vehicle vehicle) {
 		super(vehicle);
+		oldSpeed = 0;
+		emergencyBrakingHappened = false;
 		Controller.checkNewVehicle(this);
 	}
 
 	public ProjectVehicle(double roadLength, double d, int laneNumber, double e, double f) {
 		super(roadLength, d, laneNumber, e, f);
+		oldSpeed = 0;
+		emergencyBrakingHappened = false;
 		Controller.checkNewVehicle(this);
 	}
 
@@ -105,7 +114,16 @@ public class ProjectVehicle extends Vehicle {
 		getCommunicatingVehicles().clear();
 	}
 
-	public void modifyDesiredSpeed(double ns, boolean manual) {
+	public void modifyDesiredSpeed(double ns, boolean manual, boolean emergancyBreaks) {
+
+		if(emergancyBreaks) {
+			if(!emergencyBrakingHappened) {
+				emergencyBrakingHappened = true;
+				oldSpeed = this.getSpeed();
+				System.out.println("saving oldDesiredSpeed:" + oldSpeed);
+			}
+		}
+		
 		if (this.longitudinalModel instanceof IDM) {
 			IDM IDMModel = (IDM) this.longitudinalModel;
 			IDMModel.setDesiredSpeed(ns,manual);
@@ -113,9 +131,13 @@ public class ProjectVehicle extends Vehicle {
 	}
 	
 	public void resetDesiredSpeed() {
-		if (this.longitudinalModel instanceof IDM) {
-			IDM IDMModel = (IDM) this.longitudinalModel;
-			IDMModel.setDesiredSpeed(getDesiredSpeed());
+		if(emergencyBrakingHappened) {
+			System.out.println("resetting to :" + oldSpeed);
+			emergencyBrakingHappened = false;
+			if (this.longitudinalModel instanceof IDM) {
+				IDM IDMModel = (IDM) this.longitudinalModel;
+				IDMModel.setDesiredSpeed(oldSpeed);
+			}
 		}
 	}
 	

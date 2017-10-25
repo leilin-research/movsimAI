@@ -24,6 +24,7 @@ public class QLearning {
 	private static State currentState;
 	private static Action currentAction;
 
+	private static String loadPath = "./Qdata/QSave.q";
 	private static String savePath = "./Qdata/QSave.q";
 
 	public QLearning() {
@@ -31,7 +32,7 @@ public class QLearning {
 		if (loadFile) {
 			try {
 				System.out.println("Load Started!");
-				statesList = StatesListGroup.read(savePath);
+				statesList = StatesListGroup.read(loadPath);
 				System.out.println("Load Complete!");
 				
 				statesList.setNumberOfLanes(numberOfLanes);
@@ -57,7 +58,7 @@ public class QLearning {
 			Initialized = true;
 			return init(realNextState);
 		}
-
+		
 		State nextState = statesList.setNextState(currentState, realNextState);
 
 		double q = currentState.getQValue(currentAction);
@@ -144,7 +145,6 @@ public class QLearning {
 			StatesListGroup.write(statesList, savePath);
 			System.out.println("ListSaved to " + savePath);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

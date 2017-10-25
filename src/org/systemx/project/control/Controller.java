@@ -4,17 +4,12 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.movsim.simulator.roadnetwork.SpeedLimit;
-import org.movsim.simulator.vehicles.Vehicle;
-import org.systemx.project.BehaviorEnum;
 import org.systemx.project.ProjectSensedVehicle;
 import org.systemx.project.ProjectVehicle;
 import org.systemx.qlearning.QLearning;
 import org.systemx.qlearning.state.Action;
 import org.systemx.qlearning.state.CarState;
 import org.systemx.qlearning.state.State;
-import org.systemx.qlearning.state.StatesListGroup;
-
 import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
 
 public class Controller {
@@ -23,8 +18,9 @@ public class Controller {
 	static ProjectVehicle controlledVehicle;
 	static long vcid;
 	static Boolean vcActive;
-	
-	//static QLearning qLearning = new QLearning();
+
+	static QLearning qLearning = new QLearning();
+	static boolean AIControl = true;
 
 	public static void checkNewVehicle(ProjectVehicle vehicle) {
 		if (vcActive == null || !vcActive) {
@@ -40,7 +36,9 @@ public class Controller {
 			vcActive = false;
 			vcid = -1;
 			vehicle.resetDesiredSpeedToLimit();
-			//QLearning.realTimeCalculateQCrash();
+			if (AIControl) {
+				QLearning.realTimeCalculateQCrash();
+			}
 		}
 	}
 
@@ -50,23 +48,26 @@ public class Controller {
 			vehicle.setColorObject(Color.green);
 
 			State state = getCurrentState(vehicle);
-			
+
 			if (vehicleControl.isActionExecuted()) {
-				//Action action = QLearning.realTimeCalculateQ(state);
-				//Action action = qLearning.realTimeTestQ(state);
-				//vehicleControl.executeAction(action, vehicle);
+				if (AIControl) {
+					Action action = QLearning.realTimeCalculateQ(state);
+					vehicleControl.executeAction(action, vehicle);
+				}
 			}
 
 			if (vehicle.getDistanceToRoadSegmentEnd() < 30) {
 				vcActive = false;
 				vehicle.resetDesiredSpeedToLimit();
 				vehicle.setSpeed(vehicle.getSpeedlimit());
-				//QLearning.realTimeCalculateQReset();
+				if (AIControl) {
+					QLearning.realTimeCalculateQReset();
+				}
 				return;
 			}
-			
+
 			vehicleControl.machineControl(vehicle, QLearning.numberOfLanes, QLearning.speedLimit);
-		}else {
+		} else {
 			otherCarsDecision(vehicle);
 		}
 	}
@@ -77,54 +78,54 @@ public class Controller {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
 			if (sv instanceof ProjectSensedVehicle) {
 				long id = ((ProjectSensedVehicle) sv).getSenderId();
-				if(id ==vcid) {
+				if (id == vcid) {
 					vehicle.setColorObject(Color.white);
 				}
 			}
 		}
 		boolean frontCarTooClose = false;
 		boolean rearCarTooClose = false;
-		
+
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
 			if (sv instanceof ProjectSensedVehicle) {
-				
+
 				int lane = ((ProjectSensedVehicle) sv).getSenderLane();
 				int position = (int) (((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition());
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
 				long acc = (long) ((ProjectSensedVehicle) sv).getSenderAcceleration();
-				
 
-				if(lane == vehicle.getLane()) {
-					if(position > 0 && position < 5) {
-						if(speed < vehicle.getSpeed()) {
+				if (lane == vehicle.getLane()) {
+					
+					if (position > 0 && position < 5) {
+						if (speed < vehicle.getSpeed()) {
 							frontCarTooClose = true;
 						}
 					}
-					if(position < 0 && position > - 5) {
-						if(speed > vehicle.getSpeed()) {
+					if (position < 0 && position > -5) {
+						if (speed > vehicle.getSpeed()) {
 							rearCarTooClose = true;
 						}
 					}
 				}
 			}
 		}
-		
-		if(frontCarTooClose) {
+
+		if (frontCarTooClose) {
 			vehicle.setColorObject(Color.red);
-			vehicle.modifyDesiredSpeed(0.000000001, true);
-		}else {
-			vehicle.resetDesiredSpeedToLimit();
+			vehicle.modifyDesiredSpeed(0.000000001, true, true);
+		} else {
+			vehicle.resetDesiredSpeed();
 		}
-		
+
 	}
-	
+
 	private static State getCurrentState(ProjectVehicle vehicle) {
-		
+
 		CarState myCar = new CarState(vehicle.getLane(), 0, (int) vehicle.getSpeed());
 
-		List<CarState> adjacentCars = new ArrayList<CarState>(); 
-		
+		List<CarState> adjacentCars = new ArrayList<CarState>();
+
 		List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
@@ -135,10 +136,9 @@ public class Controller {
 				adjacentCars.add(new CarState(lane, position, speed));
 			}
 		}
-		
-		State state = new State(myCar,adjacentCars);
+
+		State state = new State(myCar, adjacentCars);
 		return state;
 	}
-	
-	
+
 }

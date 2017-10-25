@@ -142,7 +142,7 @@ public class FileTrajectories extends FileOutputBase implements SimulationTimeSt
         if (isLargerThanStartTimeInterval() && isSmallerThanEndTimeInterval()) {
             if (iterationCount % 1000 == 0) {
             	//joseph
-            	if((simulationTime - timeOffset) > 10000) {
+            	if((simulationTime - timeOffset) > 100000) {
             		timeOffset = simulationTime;
         	        QLearning.SaveList();
             	}

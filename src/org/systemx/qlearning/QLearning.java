@@ -73,8 +73,8 @@ public class QLearning {
 		currentState = nextState;
 		currentAction = statesList.predictSmartNextAction(currentState);
 
-		 System.out.println("NextAction:" + currentAction + " Speed:" +
-		 currentState.getMyCar().speed);
+//		 System.out.println("NextAction:" + currentAction + " Speed:" +
+//		 currentState.getMyCar().speed);
 
 		return currentAction;
 	}

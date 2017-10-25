@@ -165,16 +165,16 @@ public class VehicleControl {
 				}
 				break;
 			case noAction:
-//				if(noActionControl == 0) {
-//					noAction();
-//				}else {
-//					if(noActionControl == 1) {
-//						noActionControl = 0;
-//						actionExecuted = true;
-//					}else {
-//						noActionControl--;
-//					}
-//				}
+				if(noActionControl == 0) {
+					noAction();
+				}else {
+					if(noActionControl == 1) {
+						noActionControl = 0;
+						actionExecuted = true;
+					}else {
+						noActionControl--;
+					}
+				}
 				actionExecuted = true;
 				break;
 			default:

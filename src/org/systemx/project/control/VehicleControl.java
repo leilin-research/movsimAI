@@ -1,7 +1,9 @@
 package org.systemx.project.control;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.systemx.project.BehaviorEnum;
 import org.systemx.project.CamMessage;
@@ -12,18 +14,20 @@ import org.systemx.qlearning.state.Action;
 import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
 
 public class VehicleControl {
+	
+	public static final int timeoutIterations = 10;
 
 	public static int accelerationControl;
 	public static int laneChangeControl;
 	
 	public static int noActionControl;
 
-	
 	public static boolean CamAttackOngoing;
 	public static boolean CamAttackControl;
 	public static int CamAttackLaneControl;
 
 	private static List<Long> targetIds;
+	private static Map<Long,Integer> targetTimeout;
 	
 	static boolean actionExecuted;
 	static Action currentAction;
@@ -46,6 +50,7 @@ public class VehicleControl {
 		noActionControl = 0;
 
 		targetIds = new ArrayList<Long>();
+		targetTimeout = new HashMap<Long,Integer>();
 	}
 
 	public void moveRight() {
@@ -80,7 +85,7 @@ public class VehicleControl {
 	}
 
 	public void noAction() {
-		noActionControl = 10;
+		noActionControl = timeoutIterations;
 	}
 	
 	@Override
@@ -249,31 +254,48 @@ public class VehicleControl {
 		if (targetId != -1) {
 			if (!targetIds.contains(targetId)) {
 				targetIds.add(targetId);
+				targetTimeout.put(targetId,0);
 			}
 		}
 	}
 
 	private void sendFaultyCams(ProjectVehicle vehicle) {
+		
+		for (int i = 0; i < targetIds.size(); i++) {
+			if (targetTimeout.get(targetIds.get(i)) > timeoutIterations * 2) {
+				targetTimeout.remove(targetIds.get(i));
+				targetIds.remove(i);
+				i--;
+			}
+		}
+
 		for (int i = 0; i < targetIds.size(); i++) {
 			if (vehicle.getCommunicatingVehicles().containsKey(targetIds.get(i))) {
 				SensedVehicle sv = vehicle.getCommunicatingVehicles().get(targetIds.get(i));
 				if (sv instanceof ProjectSensedVehicle) {
 					if(((ProjectSensedVehicle) sv).getSenderSpeed() < 1) {
+						targetTimeout.remove(targetIds.get(i));
 						targetIds.remove(i);
 						i--;
 					}else {
 						int targetLane = ((ProjectSensedVehicle) sv).getSenderLane();
 						double targetPosition = ((ProjectSensedVehicle) sv).getSenderPosition();
 						double targetSpeed = ((ProjectSensedVehicle) sv).getSenderSpeed();
+						System.out.println("targetLane:" + targetLane + " targetPosition:" + targetPosition + " targetSpeed:" + targetSpeed);
 						targetSpeed = (targetSpeed < 5) ? 5 : targetSpeed;
 						vehicle.sendMessage(new CamMessage(vehicle.getId(), targetPosition + 5, targetLane, targetSpeed - 5,
 								targetIds.get(i)));
 					}
 				}
 			} else {
+				targetTimeout.remove(targetIds.get(i));
 				targetIds.remove(i);
 				i--;
 			}
+		}
+		
+		for (int i = 0; i < targetIds.size(); i++) {
+			targetTimeout.put(targetIds.get(i), targetTimeout.get(targetIds.get(i)) + 1);
 		}
 	}
 

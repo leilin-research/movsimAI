@@ -93,7 +93,7 @@ public class SimulationRunnable extends SimulationRun implements Runnable {
 	private int sleepTime_ms;
 	private int sleepTimeUsed;
 	private static final double DEFAULT_TIMESTEP_S = 0.25; // default timestep, seconds
-	private static final int DEFAULT_SLEEP_TIME_MS = 20; // default sleep time, milliseconds
+	private static final int DEFAULT_SLEEP_TIME_MS = 10; // default sleep time, milliseconds
 	private boolean pausedWhenRunning;
 	private long lastUpdateTime_ms;
 	private double actualTimewarp = 0;

@@ -281,7 +281,7 @@ public class VehicleControl {
 						int targetLane = ((ProjectSensedVehicle) sv).getSenderLane();
 						double targetPosition = ((ProjectSensedVehicle) sv).getSenderPosition();
 						double targetSpeed = ((ProjectSensedVehicle) sv).getSenderSpeed();
-						System.out.println("targetLane:" + targetLane + " targetPosition:" + targetPosition + " targetSpeed:" + targetSpeed);
+//						System.out.println("targetLane:" + targetLane + " targetPosition:" + targetPosition + " targetSpeed:" + targetSpeed);
 						targetSpeed = (targetSpeed < 5) ? 5 : targetSpeed;
 						vehicle.sendMessage(new CamMessage(vehicle.getId(), targetPosition + 5, targetLane, targetSpeed - 5,
 								targetIds.get(i)));

@@ -115,12 +115,13 @@ public class ProjectVehicle extends Vehicle {
 	}
 
 	public void modifyDesiredSpeed(double ns, boolean manual, boolean emergancyBreaks) {
-
 		if(emergancyBreaks) {
 			if(!emergencyBrakingHappened) {
 				emergencyBrakingHappened = true;
 				oldSpeed = this.getSpeed();
-				System.out.println("saving oldDesiredSpeed:" + oldSpeed);
+				if(oldSpeed<getSpeedlimit()/2) {
+					oldSpeed = getSpeedlimit();
+				}
 			}
 		}
 		
@@ -132,7 +133,6 @@ public class ProjectVehicle extends Vehicle {
 	
 	public void resetDesiredSpeed() {
 		if(emergencyBrakingHappened) {
-			System.out.println("resetting to :" + oldSpeed);
 			emergencyBrakingHappened = false;
 			if (this.longitudinalModel instanceof IDM) {
 				IDM IDMModel = (IDM) this.longitudinalModel;

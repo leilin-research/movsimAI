@@ -15,7 +15,7 @@ public class QLearning {
 	
 	public static final int numberOfLanes = 3;
 	public static final int speedLimit = 20;
-	public static final boolean withMisb = false;
+	public static final boolean withMisb = true;
 	
 	private static boolean Initialized = false;
 	
@@ -73,8 +73,8 @@ public class QLearning {
 		currentState = nextState;
 		currentAction = statesList.predictSmartNextAction(currentState);
 
-		// System.out.println("NextAction:" + currentAction + " Speed:" +
-		// currentState.getMyCar().speed);
+		 System.out.println("NextAction:" + currentAction + " Speed:" +
+		 currentState.getMyCar().speed);
 
 		return currentAction;
 	}

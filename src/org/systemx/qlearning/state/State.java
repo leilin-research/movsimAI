@@ -150,13 +150,13 @@ public class State {
 			boolean misbFront = false;
 
 			for (CarState adjCar : adjacentCars) {
-				if (adjCar.lane < myCar.lane && adjCar.position>-10) {
+				if (adjCar.lane < myCar.lane && adjCar.position>-10 && adjCar.speed>1) {
 					misbLeft = true;
 				}
-				if (adjCar.lane > myCar.lane && adjCar.position>-10) {
+				if (adjCar.lane > myCar.lane && adjCar.position>-10 && adjCar.speed>1) {
 					misbRight = true;
 				}
-				if (adjCar.lane == myCar.lane && adjCar.position>=0) {
+				if (adjCar.lane == myCar.lane && adjCar.position>=0 && adjCar.speed>1) {
 					misbFront = true;
 				}
 			}

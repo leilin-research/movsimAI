@@ -121,11 +121,10 @@ public class Controller {
 	}
 
 	private static State getCurrentState(ProjectVehicle vehicle) {
-
 		CarState myCar = new CarState(vehicle.getLane(), 0, (int) vehicle.getSpeed());
-
+		
 		List<CarState> adjacentCars = new ArrayList<CarState>();
-
+		
 		List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));

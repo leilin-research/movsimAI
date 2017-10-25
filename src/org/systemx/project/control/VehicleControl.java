@@ -15,12 +15,16 @@ public class VehicleControl {
 
 	public static int accelerationControl;
 	public static int laneChangeControl;
+	
+	public static int noActionControl;
 
+	
+	public static boolean CamAttackOngoing;
 	public static boolean CamAttackControl;
 	public static int CamAttackLaneControl;
 
 	private static List<Long> targetIds;
-
+	
 	static boolean actionExecuted;
 	static Action currentAction;
 	static int oldLane;
@@ -30,12 +34,16 @@ public class VehicleControl {
 		super();
 		accelerationControl = 0;
 		laneChangeControl = 0;
+		
 		CamAttackControl = false;
+		
 		CamAttackLaneControl = 0;
 
 		actionExecuted = true;
 		oldLane = 0;
 		oldSpeed = 0;
+		
+		noActionControl = 0;
 
 		targetIds = new ArrayList<Long>();
 	}
@@ -71,6 +79,10 @@ public class VehicleControl {
 		CamAttackLaneControl = -1;
 	}
 
+	public void noAction() {
+		noActionControl = 10;
+	}
+	
 	@Override
 	public String toString() {
 		return "vehicleControl [acceleration=" + accelerationControl + " lane=" + laneChangeControl + "]";
@@ -118,20 +130,51 @@ public class VehicleControl {
 					actionExecuted = true;
 				}
 				break;
-			case noAction:
-				actionExecuted = true;
-				break;
+
 			case misbFront:
-				camAttackFront();
-				actionExecuted = true;
+				if(!CamAttackOngoing) {
+					CamAttackOngoing = true;
+					camAttackFront();
+				}else {
+					if(targetIds.size() == 0) {
+						CamAttackOngoing = false;
+						actionExecuted = true;
+					}
+				}
 				break;
 			case misbRight:
-				camAttackRight();
-				actionExecuted = true;
+				if(!CamAttackOngoing) {
+					CamAttackOngoing = true;
+					camAttackRight();
+				}else {
+					if(targetIds.size() == 0) {
+						CamAttackOngoing = false;
+						actionExecuted = true;
+					}
+				}
 				break;
 			case misbLeft:
-				camAttackLeft();
-				actionExecuted = true;
+				if(!CamAttackOngoing) {
+					CamAttackOngoing = true;
+					camAttackLeft();
+				}else {
+					if(targetIds.size() == 0) {
+						CamAttackOngoing = false;
+						actionExecuted = true;
+					}
+				}
+				break;
+			case noAction:
+				if(noActionControl == 0) {
+					noAction();
+				}else {
+					if(noActionControl == 1) {
+						noActionControl = 0;
+						actionExecuted = true;
+					}else {
+						noActionControl--;
+					}
+				}
 				break;
 			default:
 				actionExecuted = true;
@@ -214,18 +257,23 @@ public class VehicleControl {
 			if (vehicle.getCommunicatingVehicles().containsKey(targetIds.get(i))) {
 				SensedVehicle sv = vehicle.getCommunicatingVehicles().get(targetIds.get(i));
 				if (sv instanceof ProjectSensedVehicle) {
-					int targetLane = ((ProjectSensedVehicle) sv).getSenderLane();
-					double targetPosition = ((ProjectSensedVehicle) sv).getSenderPosition();
-					double targetSpeed = ((ProjectSensedVehicle) sv).getSenderSpeed();
-					vehicle.sendMessage(new CamMessage(vehicle.getId(), targetPosition + 5, targetLane, targetSpeed - 5,
-							targetIds.get(i)));
+					if(((ProjectSensedVehicle) sv).getSenderSpeed() < 1) {
+						targetIds.remove(i);
+						i--;
+					}else {
+						int targetLane = ((ProjectSensedVehicle) sv).getSenderLane();
+						double targetPosition = ((ProjectSensedVehicle) sv).getSenderPosition();
+						double targetSpeed = ((ProjectSensedVehicle) sv).getSenderSpeed();
+						targetSpeed = (targetSpeed < 5) ? 5 : targetSpeed;
+						vehicle.sendMessage(new CamMessage(vehicle.getId(), targetPosition + 5, targetLane, targetSpeed - 5,
+								targetIds.get(i)));
+					}
 				}
 			} else {
 				targetIds.remove(i);
 				i--;
 			}
 		}
-
 	}
 
 	public boolean isActionExecuted() {

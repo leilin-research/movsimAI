@@ -42,12 +42,12 @@ public class ExpBetaSelector {
 		Random rand = new Random();
 		Map<Action, Double> weights = calcWeights(state, possibleActions);
 
-//		System.err.println("Qv:" + state.getQValues().serialiseValues());
+//		System.out.println("Qv:" + state.getQValues().serialiseValues());
 //		for (Action a : possibleActions) {
-//			System.err.print(a + ":" + weights.get(a) + " ");
+//			System.out.print(a + ":" + weights.get(a) + " ");
 //		}
-//		System.err.println();
-//		System.err.println("------------------------------------------------------------");
+//		System.out.println();
+//		System.out.println("------------------------------------------------------------");
 
 		double sumWeights = 0.0;
 		for (Double weight : weights.values()) {
@@ -58,9 +58,9 @@ public class ExpBetaSelector {
 			selnum -= weights.get(action);
 			if (selnum <= 0.0) {
 //				if(state.getMaxQValue(possibleActions) == state.getQValue(action)) {
-//					System.out.println("===============================BEST");
+//					System.out.println("===============================BEST " + action);
 //				}else {
-//					System.err.println("===============================NOTBEST");
+//					System.out.println("===============================NOTBEST "+ action);
 //				}
 				return action;
 			}

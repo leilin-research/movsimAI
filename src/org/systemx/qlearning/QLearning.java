@@ -128,7 +128,7 @@ public class QLearning {
 			System.err.println(s);
 		}
 		System.err.println("Crash " + currentAction + " " + currentState.getQValues().getQList().size() + "/"
-				+ actions.size() + " :" + q + "/" + Qvalue);
+				+ actions.size() + " :" + q + "/" + Qvalue +" speed:" + currentState.getMyCar().speed);
 		currentState.setQValue(currentAction, Qvalue);
 
 		realTimeCalculateQReset();

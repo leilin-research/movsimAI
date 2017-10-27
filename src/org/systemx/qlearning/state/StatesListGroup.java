@@ -8,7 +8,8 @@ import org.systemx.qlearning.commun.FileParser;
 public class StatesListGroup {
 	
     public static void write(StatesList statesList, String filename) throws Exception{
-    	FileParser.writeFile(filename, statesList);
+    	FileParser.writeFile(filename + ".temp", statesList);
+    	FileParser.renameFile(filename + ".temp",filename);
     }
 
     public static StatesList read(String filename) throws Exception {

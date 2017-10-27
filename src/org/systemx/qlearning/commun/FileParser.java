@@ -141,6 +141,12 @@ public class FileParser {
 		System.out.println();
 		out.close();
 	}
+	
+	public static void renameFile(String originalName, String newName) {
+		File file = new File(originalName);
+		File file2 = new File(newName);
+		file.renameTo(file2);
+	}
 
 	private static List<String> readFile(File fin) throws IOException {
 		List<String> lines = new ArrayList<String>();

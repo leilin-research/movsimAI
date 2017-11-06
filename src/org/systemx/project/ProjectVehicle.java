@@ -47,28 +47,32 @@ public class ProjectVehicle extends Vehicle {
 	 * Initial Scenario
 	 */
 		public void scenarioSlowVehicles(){
-			/*
-			 * vehicles stay on their lane and their desired speed is divided by 2 
-			 */
-			modifyDesiredSpeed(-0.5);
+			modifyDesiredSpeed(-0.1);
 		}
 		
 		public void scenarioSlowVehiclesOnRight(){
-			/*
-			 * vehicles change to right if they are on left and their desired speed is divided by 2 
-			 */
-			modifyDesiredSpeed(-0.5);
+			modifyDesiredSpeed(-0.1);
 			modifiedDesiredLane(BehaviorEnum.leftToright);
 		}
 		
 		public void scenarioSlowVehiclesOnleft(){
-			/*
-			 * vehicles change to right if they are on left and their desired speed is divided by 2 
-			 */
-			modifyDesiredSpeed(-0.5);
+			modifyDesiredSpeed(-0.1);
 			modifiedDesiredLane(BehaviorEnum.rightToleft);
 		}
-
+		
+		public void scenarioSpeedVehicles(){
+			modifyDesiredSpeed(+0.1);
+		}
+		
+		public void scenarioSpeedVehiclesOnRight(){
+			modifyDesiredSpeed(+0.1);
+			modifiedDesiredLane(BehaviorEnum.leftToright);
+		}
+		
+		public void scenarioSpeedVehiclesOnleft(){
+			modifyDesiredSpeed(+0.1);
+			modifiedDesiredLane(BehaviorEnum.rightToleft);
+		}
 	/**
 	 * handles received messages
 	 * 

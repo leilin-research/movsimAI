@@ -81,8 +81,9 @@ public class Controller {
 			if (sv instanceof ProjectSensedVehicle) {
 				long id = ((ProjectSensedVehicle) sv).getSenderId();
 				if (id == vcid) {
-					if (Math.abs(((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane()) <2) {
-						if(Math.abs(((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition()) <50) {
+					if (Math.abs(((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane()) < 2) {
+						if (Math.abs(
+								((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition()) < 50) {
 							vehicle.setColorObject(Color.white);
 						}
 					}
@@ -102,7 +103,7 @@ public class Controller {
 				long acc = (long) ((ProjectSensedVehicle) sv).getSenderAcceleration();
 
 				if (lane == vehicle.getLane()) {
-					
+
 					if (position > 0 && position < 5) {
 						if (speed < vehicle.getSpeed()) {
 							frontCarTooClose = true;
@@ -121,16 +122,63 @@ public class Controller {
 			vehicle.setColorObject(Color.red);
 			vehicle.modifyDesiredSpeed(0.000000001, true, true);
 		} else {
-			vehicle.resetDesiredSpeed();			
+			vehicle.resetDesiredSpeed();
+
+			if (qLearning.withAlea) {
+				Random rand = new Random();
+				double randon = rand.nextDouble() / qLearning.aleaFactor;
+				int randInt = (int) randon;
+
+				if (randInt < 6) {
+					System.out.println("Worked!");
+				}
+
+				if (vehicle.getDesiredSpeed() < vehicle.getSpeedlimit() / 1.8) {
+					randon = randon / 100;
+					randInt = (int) randon;
+					switch (randInt) {
+					case 0:
+						vehicle.scenarioSpeedVehicles();
+						break;
+					case 10:
+						vehicle.scenarioSpeedVehiclesOnleft();
+						break;
+					case 11:
+						vehicle.scenarioSpeedVehiclesOnRight();
+						break;
+					}
+				} else {
+					switch (randInt) {
+					case 0:
+						vehicle.scenarioSlowVehicles();
+						break;
+					case 1:
+						vehicle.scenarioSlowVehiclesOnleft();
+						break;
+					case 2:
+						vehicle.scenarioSlowVehiclesOnRight();
+						break;
+					case 3:
+						vehicle.scenarioSpeedVehicles();
+						break;
+					case 4:
+						vehicle.scenarioSpeedVehiclesOnleft();
+						break;
+					case 5:
+						vehicle.scenarioSpeedVehiclesOnRight();
+						break;
+					}
+				}
+			}
 		}
 
 	}
 
 	private static State getCurrentState(ProjectVehicle vehicle) {
 		AgentCarState myCar = new AgentCarState(vehicle.getLane(), (int) vehicle.getSpeed());
-		
+
 		List<AdjacentCarState> adjacentCars = new ArrayList<AdjacentCarState>();
-		
+
 		List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
@@ -138,9 +186,9 @@ public class Controller {
 				int lane = ((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane();
 				int position = (int) (((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition());
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
-				
-				if(Math.abs(lane) < 2) {
-					if(Math.abs(position)<50) {
+
+				if (Math.abs(lane) < 2) {
+					if (Math.abs(position) < 50) {
 						adjacentCars.add(new AdjacentCarState(lane, position, speed));
 					}
 				}

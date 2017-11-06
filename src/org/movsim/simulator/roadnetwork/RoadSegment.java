@@ -1379,7 +1379,7 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
                 final double netDistance = vehicle.getNetDistance(vehFront);
                 
                 
-                if (netDistance - 1.9 < 0) {
+                if (netDistance - 0 < 0) {
                     if(vehicle instanceof ProjectVehicle) {
                     	((ProjectVehicle) vehicle).vehicleCrashed();
                     	vehicle.cheat(vehicle.getSpeed()/4, 0.0);

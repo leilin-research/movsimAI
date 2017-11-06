@@ -38,7 +38,7 @@ public class QLearning {
 				statesList.setNumberOfLanes(numberOfLanes);
 				statesList.setSpeedLimit(speedLimit);
 				statesList.setWithMisb(withMisb);
-				
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

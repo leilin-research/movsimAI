@@ -1,6 +1,8 @@
 package org.systemx.qlearning.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class State {
@@ -47,7 +49,8 @@ public class State {
 		this.id = calculateId();
 	}
 
-	public State(QValues qValues, AgentCarState myCar, List<AdjacentCarState> adjacentCars, List<String> relatedStates) {
+	public State(QValues qValues, AgentCarState myCar, List<AdjacentCarState> adjacentCars,
+			List<String> relatedStates) {
 		super();
 		this.qValues = new QValues();
 		this.myCar = new AgentCarState();
@@ -134,7 +137,7 @@ public class State {
 
 		if (myCar.speed > 0) {
 			actions.add(Action.decSpeed);
-			
+
 			if (myCar.lane > 1) {
 				actions.add(Action.goLeft);
 			}
@@ -143,20 +146,20 @@ public class State {
 				actions.add(Action.goRight);
 			}
 		}
-		
+
 		if (withMisb) {
 			boolean misbRight = false;
 			boolean misbLeft = false;
 			boolean misbFront = false;
 
 			for (AdjacentCarState adjCar : adjacentCars) {
-				if (adjCar.lane < 0 && adjCar.position>-10 && adjCar.speed>1) {
+				if (adjCar.lane < 0 && adjCar.position > -10 && adjCar.speed > 1) {
 					misbLeft = true;
 				}
-				if (adjCar.lane > 0 && adjCar.position>-10 && adjCar.speed>1) {
+				if (adjCar.lane > 0 && adjCar.position > -10 && adjCar.speed > 1) {
 					misbRight = true;
 				}
-				if (adjCar.lane == 0 && adjCar.position>=0 && adjCar.speed>1) {
+				if (adjCar.lane == 0 && adjCar.position >= 0 && adjCar.speed > 1) {
 					misbFront = true;
 				}
 			}
@@ -184,6 +187,32 @@ public class State {
 
 	String calculateId() {
 		String s = "" + myCar.lane + myCar.speed;
+
+		Collections.sort(adjacentCars, new Comparator<AdjacentCarState>() {
+			public int compare(AdjacentCarState c1, AdjacentCarState c2) {
+
+				if (Math.abs(c1.lane) > Math.abs(c2.lane))
+					return -1;
+				if (Math.abs(c1.lane) < Math.abs(c2.lane))
+					return 1;
+				
+				if (Math.abs(c1.lane) == Math.abs(c2.lane)) {
+					if (Math.abs(c1.position) > Math.abs(c2.position))
+						return -1;
+					if (Math.abs(c1.position) < Math.abs(c2.position))
+						return 1;
+
+					if (Math.abs(c1.position) == Math.abs(c2.position)) {
+						if (c1.speed > c2.speed)
+							return -1;
+						if (c1.speed < c2.speed)
+							return 1;
+					}
+				}
+				return 0;
+			}
+		});
+
 		for (int i = 0; i < adjacentCars.size(); i++) {
 			s = s + adjacentCars.get(i).lane + adjacentCars.get(i).position + adjacentCars.get(i).speed;
 		}

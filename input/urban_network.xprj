@@ -24,7 +24,7 @@
             </TrafficComposition>
             <Road id="1">
                 <TrafficSource logging="false">
-                    <Inflow t="0" q_per_hour="300" v="13.88" />
+                    <Inflow t="0" q_per_hour="500" v="13.88" />
                 </TrafficSource>
 				
 				<RoadSideUnits>

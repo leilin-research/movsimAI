@@ -207,6 +207,7 @@ public class FileParser {
 	public static void renameFile(String originalName, String newName) {
 		File file = new File(originalName);
 		File file2 = new File(newName);
+		file2.delete();
 		file.renameTo(file2);
 	}
 

@@ -17,8 +17,8 @@ public class QLearning {
 	public static final int speedLimit = 100;
 	public static final boolean withMisb = false;
 	
-	public static final boolean withAlea = false;
-	public static final double aleaFactor = 0.001;
+	public static final boolean withAlea = true;
+	public static final double aleaFactor = 0.0005;
 	
 	private static boolean Initialized = false;
 	

@@ -47,31 +47,21 @@ public class ProjectVehicle extends Vehicle {
 	 * Initial Scenario
 	 */
 		public void scenarioSlowVehicles(){
-			modifyDesiredSpeed(-0.1);
+			modifyDesiredSpeed(-0.2);
 		}
 		
 		public void scenarioSlowVehiclesOnRight(){
-			modifyDesiredSpeed(-0.1);
-			modifiedDesiredLane(BehaviorEnum.leftToright);
-		}
-		
-		public void scenarioSlowVehiclesOnleft(){
-			modifyDesiredSpeed(-0.1);
-			modifiedDesiredLane(BehaviorEnum.rightToleft);
+			modifyDesiredSpeed(-0.2);
+			modifiedDesiredLaneDiscretionary(BehaviorEnum.leftToright);
 		}
 		
 		public void scenarioSpeedVehicles(){
-			modifyDesiredSpeed(+0.1);
-		}
-		
-		public void scenarioSpeedVehiclesOnRight(){
-			modifyDesiredSpeed(+0.1);
-			modifiedDesiredLane(BehaviorEnum.leftToright);
+			modifyDesiredSpeed(+0.4);
 		}
 		
 		public void scenarioSpeedVehiclesOnleft(){
-			modifyDesiredSpeed(+0.1);
-			modifiedDesiredLane(BehaviorEnum.rightToleft);
+			modifyDesiredSpeed(+0.4);
+			modifiedDesiredLaneDiscretionary(BehaviorEnum.rightToleft);
 		}
 	/**
 	 * handles received messages
@@ -187,12 +177,7 @@ public class ProjectVehicle extends Vehicle {
 			//	System.out.println(" avant modification : "  + IDMModel.getDesiredSpeed());
 				double currentDesiredSpeed = IDMModel.getDesiredSpeed() * (1 + ns); 
 				double ancien = IDMModel.getDesiredSpeed();
-				if (ns > 0)
-					System.out.println(getId() + " accélère "+ ancien + " to " + currentDesiredSpeed);
-				else
-					System.out.println(getId() + " ralenti "+ ancien + " to " + currentDesiredSpeed);
 				IDMModel.setDesiredSpeed(currentDesiredSpeed);
-				System.out.println(" après modification : "  + IDMModel.getDesiredSpeed());
 			}
 		}
 	}
@@ -227,6 +212,17 @@ public class ProjectVehicle extends Vehicle {
 			break;
 		case rightToleft:
 			setManualLaneChange(LaneChangeDecision.MANDATORY_TO_LEFT);
+			break;
+		}
+	}
+	
+	public void modifiedDesiredLaneDiscretionary(BehaviorEnum behavior) {
+		switch (behavior) {
+		case leftToright:
+			setManualLaneChange(LaneChangeDecision.DISCRETIONARY_TO_RIGHT);
+			break;
+		case rightToleft:
+			setManualLaneChange(LaneChangeDecision.DISCRETIONARY_TO_LEFT);
 			break;
 		}
 	}

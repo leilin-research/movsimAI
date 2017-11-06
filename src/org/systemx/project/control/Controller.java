@@ -123,49 +123,35 @@ public class Controller {
 			vehicle.modifyDesiredSpeed(0.000000001, true, true);
 		} else {
 			vehicle.resetDesiredSpeed();
-
 			if (qLearning.withAlea) {
 				Random rand = new Random();
 				double randon = rand.nextDouble() / qLearning.aleaFactor;
 				int randInt = (int) randon;
 
-				if (randInt < 6) {
-					System.out.println("Worked!");
-				}
-
-				if (vehicle.getDesiredSpeed() < vehicle.getSpeedlimit() / 1.8) {
-					randon = randon / 100;
+				if (vehicle.getDesiredSpeed() < vehicle.getSpeedlimit() / 1.5) {
+					randon = rand.nextInt(10);
 					randInt = (int) randon;
 					switch (randInt) {
-					case 0:
+					case 0:case 1:
 						vehicle.scenarioSpeedVehicles();
 						break;
-					case 10:
+					case 2:
 						vehicle.scenarioSpeedVehiclesOnleft();
-						break;
-					case 11:
-						vehicle.scenarioSpeedVehiclesOnRight();
 						break;
 					}
 				} else {
 					switch (randInt) {
-					case 0:
+					case 0:case 1:
 						vehicle.scenarioSlowVehicles();
-						break;
-					case 1:
-						vehicle.scenarioSlowVehiclesOnleft();
 						break;
 					case 2:
 						vehicle.scenarioSlowVehiclesOnRight();
 						break;
-					case 3:
+					case 3:case 4:case 5:case 6:
 						vehicle.scenarioSpeedVehicles();
 						break;
-					case 4:
+					case 7:case 8:
 						vehicle.scenarioSpeedVehiclesOnleft();
-						break;
-					case 5:
-						vehicle.scenarioSpeedVehiclesOnRight();
 						break;
 					}
 				}

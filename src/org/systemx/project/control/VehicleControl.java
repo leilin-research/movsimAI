@@ -212,14 +212,14 @@ public class VehicleControl {
 			laneChangeControl = 0;
 			if (vehicle.getContinousLane() % 1 == 0) {
 				if (vehicle.getLane() > 0) {
-					vehicle.modifiedDesiredLane(BehaviorEnum.rightToleft);
+					vehicle.modifiedDesiredLaneMandatory(BehaviorEnum.rightToleft);
 				}
 			}
 		}
 		if (laneChangeControl > 0) {
 			laneChangeControl = 0;
 			if (vehicle.getContinousLane() % 1 == 0) {
-				vehicle.modifiedDesiredLane(BehaviorEnum.leftToright);
+				vehicle.modifiedDesiredLaneMandatory(BehaviorEnum.leftToright);
 			}
 		}
 

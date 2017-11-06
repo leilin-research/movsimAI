@@ -42,6 +42,32 @@ public class ProjectVehicle extends Vehicle {
 	}
 
 	SensedVehicle immediateLeader = null;
+	
+	/*
+	 * Initial Scenario
+	 */
+		public void scenarioSlowVehicles(){
+			/*
+			 * vehicles stay on their lane and their desired speed is divided by 2 
+			 */
+			modifyDesiredSpeed(-0.5);
+		}
+		
+		public void scenarioSlowVehiclesOnRight(){
+			/*
+			 * vehicles change to right if they are on left and their desired speed is divided by 2 
+			 */
+			modifyDesiredSpeed(-0.5);
+			modifiedDesiredLane(BehaviorEnum.leftToright);
+		}
+		
+		public void scenarioSlowVehiclesOnleft(){
+			/*
+			 * vehicles change to right if they are on left and their desired speed is divided by 2 
+			 */
+			modifyDesiredSpeed(-0.5);
+			modifiedDesiredLane(BehaviorEnum.rightToleft);
+		}
 
 	/**
 	 * handles received messages
@@ -148,18 +174,49 @@ public class ProjectVehicle extends Vehicle {
 		}
 	}
 
-	public double getDesiredSpeed() {
+	private void modifyDesiredSpeed(double ns){
+		if (this.longitudinalModel instanceof IDM) {
+			IDM IDMModel = (IDM) this.longitudinalModel;
+			if (ns > 0 && IDMModel.getDesiredSpeed() < (160.0d/ 3.6d) ||
+			   (ns < 0 && IDMModel.getDesiredSpeed() > (10.0d/ 3.6d))
+			   ){
+			//	System.out.println(" avant modification : "  + IDMModel.getDesiredSpeed());
+				double currentDesiredSpeed = IDMModel.getDesiredSpeed() * (1 + ns); 
+				double ancien = IDMModel.getDesiredSpeed();
+				if (ns > 0)
+					System.out.println(getId() + " accélère "+ ancien + " to " + currentDesiredSpeed);
+				else
+					System.out.println(getId() + " ralenti "+ ancien + " to " + currentDesiredSpeed);
+				IDMModel.setDesiredSpeed(currentDesiredSpeed);
+				System.out.println(" après modification : "  + IDMModel.getDesiredSpeed());
+			}
+		}
+	}
+	
+	public double getDesiredSpeed(){
 		if (this.longitudinalModel instanceof IDM) {
 			IDM IDMModel = (IDM) this.longitudinalModel;
 			return IDMModel.getDesiredSpeed();
 		}
 		return Double.NaN;
 	}
+	
+	
+	/*
+	 *change its desired lane
+	 */
+	private void modifiedDesiredLane(BehaviorEnum behavior){
+		switch (behavior){
+		case leftToright: closedLaneAhead = 1; break;
+		case rightToleft: closedLaneAhead = 2; break;
+		default : closedLaneAhead = -1;
+		}
+	}
 
 	/*
 	 * change its desired lane
 	 */
-	public void modifiedDesiredLane(BehaviorEnum behavior) {
+	public void modifiedDesiredLaneMandatory(BehaviorEnum behavior) {
 		switch (behavior) {
 		case leftToright:
 			setManualLaneChange(LaneChangeDecision.MANDATORY_TO_RIGHT);

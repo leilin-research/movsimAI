@@ -3,6 +3,7 @@ package org.systemx.project.control;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.systemx.project.ProjectSensedVehicle;
 import org.systemx.project.ProjectVehicle;
@@ -116,7 +117,7 @@ public class Controller {
 			vehicle.setColorObject(Color.red);
 			vehicle.modifyDesiredSpeed(0.000000001, true, true);
 		} else {
-			vehicle.resetDesiredSpeed();
+			vehicle.resetDesiredSpeed();			
 		}
 
 	}

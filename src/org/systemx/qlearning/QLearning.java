@@ -92,11 +92,11 @@ public class QLearning {
 		case noAction:
 			return 0;
 		case misbFront:
-			return 0;
+			return -5;
 		case misbLeft:
-			return 0;
+			return -5;
 		case misbRight:
-			return 0;
+			return -5;
 		default:
 			return 0;
 		}

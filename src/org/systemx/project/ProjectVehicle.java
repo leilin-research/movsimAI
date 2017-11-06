@@ -145,7 +145,7 @@ public class ProjectVehicle extends Vehicle {
 			if(!emergencyBrakingHappened) {
 				emergencyBrakingHappened = true;
 				oldSpeed = this.getSpeed();
-				if(oldSpeed<getSpeedlimit()/2) {
+				if(oldSpeed<getSpeedlimit()/1) {
 					oldSpeed = getSpeedlimit();
 				}
 			}

@@ -67,11 +67,11 @@ public class StatesList {
 		if (state.getQValues().getQList().size()>0) {
 			return predictNextAction(state);
 		}else {
-			List<String> adjacentStates = getAdjacentStates(state);
-			if(adjacentStates.size()>0) {
+			List<String> possibleStates = getFullPossibleStates(state);
+			if(possibleStates.size()>0) {
 				Action maxAction = null;
 				Double maxQ = - Double.MAX_VALUE;
-				for (String StateId: adjacentStates) {
+				for (String StateId: possibleStates) {
 					List<Action> possibleActions = states.get(StateId).getPossibleActions(numberOfLanes, speedLimit, withMisb);
 					Double localMaxQ = states.get(StateId).getMaxQValue(possibleActions);
 					if(localMaxQ > maxQ) {
@@ -92,17 +92,32 @@ public class StatesList {
 		}
 	}
 
-	public List<String> getAdjacentStates(State state) {
-		List<String> adjacentStatesIds = new ArrayList<String>();
-		State adjState;
-
+	public List<String> getFullPossibleStates(State state) {
+		List<String> fullPossibleStatesIds = new ArrayList<String>();
+		State lanePossibleState;
+		for (int i = 1; i <= numberOfLanes; i++) {
+			lanePossibleState = new State(state);
+			lanePossibleState.getMyCar().lane = i;
+			fullPossibleStatesIds.addAll(getPossibleStates(lanePossibleState));
+		}
+		return fullPossibleStatesIds;
+	}
+	
+	public List<String> getPossibleStates(State state) {
+		List<String> possibleStatesIds = new ArrayList<String>();
+		State possibleState;
+		state.id = state.calculateId();
+		if (states.containsKey(state.id)) {
+			possibleStatesIds.add(state.id);
+		}
+		
 		List<AgentCarState> possibleAgentCars = state.getMyCar().possibleAdj(numberOfLanes, speedLimit);
 		for (AgentCarState myCar : possibleAgentCars) {
-			adjState = new State(state);
-			adjState.setMyCar(myCar);
-			adjState.id = adjState.calculateId();
-			if (states.containsKey(adjState.id)) {
-				adjacentStatesIds.add(adjState.id);
+			possibleState = new State(state);
+			possibleState.setMyCar(myCar);
+			possibleState.id = possibleState.calculateId();
+			if (states.containsKey(possibleState.id)) {
+				possibleStatesIds.add(possibleState.id);
 			}
 		}
 
@@ -110,39 +125,39 @@ public class StatesList {
 		for (int i = 0; i< state.getAdjacentCars().size();i++) {
 			possibleAdjCars = state.getAdjacentCars().get(i).possibleAdj(numberOfLanes, speedLimit);
 			for (AdjacentCarState possibleCar : possibleAdjCars) {
-				adjState = new State(state);
-				adjState.getAdjacentCars().set(i, possibleCar);
-				adjState.id = adjState.calculateId();
-				if (states.containsKey(adjState.id)) {
-					adjacentStatesIds.add(adjState.id);
+				possibleState = new State(state);
+				possibleState.getAdjacentCars().set(i, possibleCar);
+				possibleState.id = possibleState.calculateId();
+				if (states.containsKey(possibleState.id)) {
+					possibleStatesIds.add(possibleState.id);
 				}
 			}
 		}
 		
 		if(state.getAdjacentCars().size()>1) {
-			adjState = new State(state);
+			possibleState = new State(state);
 			for (int i = 0; i< state.getAdjacentCars().size();i++) {
 				AdjacentCarState carState = state.getAdjacentCars().get(i);
 				carState.position++;
-				adjState.getAdjacentCars().set(i, new AdjacentCarState(carState));
+				possibleState.getAdjacentCars().set(i, new AdjacentCarState(carState));
 			}
-			adjState.id = adjState.calculateId();
-			if (states.containsKey(adjState.id)) {
-				adjacentStatesIds.add(adjState.id);
+			possibleState.id = possibleState.calculateId();
+			if (states.containsKey(possibleState.id)) {
+				possibleStatesIds.add(possibleState.id);
 			}
 			
-			adjState = new State(state);
+			possibleState = new State(state);
 			for (int i = 0; i< state.getAdjacentCars().size();i++) {
 				AdjacentCarState carState = state.getAdjacentCars().get(i);
 				carState.position--;
-				adjState.getAdjacentCars().set(i, new AdjacentCarState(carState));
+				possibleState.getAdjacentCars().set(i, new AdjacentCarState(carState));
 			}
-			adjState.id = adjState.calculateId();
-			if (states.containsKey(adjState.id)) {
-				adjacentStatesIds.add(adjState.id);
+			possibleState.id = possibleState.calculateId();
+			if (states.containsKey(possibleState.id)) {
+				possibleStatesIds.add(possibleState.id);
 			}
 		}		
-		return adjacentStatesIds;
+		return possibleStatesIds;
 	}
 
 	public Action predictRandomNextAction(State state) {

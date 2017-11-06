@@ -81,7 +81,11 @@ public class Controller {
 			if (sv instanceof ProjectSensedVehicle) {
 				long id = ((ProjectSensedVehicle) sv).getSenderId();
 				if (id == vcid) {
-					vehicle.setColorObject(Color.white);
+					if (Math.abs(((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane()) <2) {
+						if(Math.abs(((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition()) <50) {
+							vehicle.setColorObject(Color.white);
+						}
+					}
 				}
 			}
 		}
@@ -134,7 +138,12 @@ public class Controller {
 				int lane = ((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane();
 				int position = (int) (((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition());
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
-				adjacentCars.add(new AdjacentCarState(lane, position, speed));
+				
+				if(Math.abs(lane) < 2) {
+					if(Math.abs(position)<50) {
+						adjacentCars.add(new AdjacentCarState(lane, position, speed));
+					}
+				}
 			}
 		}
 

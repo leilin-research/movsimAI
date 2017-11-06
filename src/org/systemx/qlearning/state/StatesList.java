@@ -64,29 +64,30 @@ public class StatesList {
 	}
 
 	public Action predictSmartNextAction(State state) {
-		if (state.getQValues().getQList().size()>0) {
+		if (state.getQValues().getQList().size() > 0) {
 			return predictNextAction(state);
-		}else {
+		} else {
 			List<String> possibleStates = getFullPossibleStates(state);
-			if(possibleStates.size()>0) {
+			if (possibleStates.size() > 0) {
 				Action maxAction = null;
-				Double maxQ = - Double.MAX_VALUE;
-				for (String StateId: possibleStates) {
-					List<Action> possibleActions = states.get(StateId).getPossibleActions(numberOfLanes, speedLimit, withMisb);
+				Double maxQ = -Double.MAX_VALUE;
+				for (String StateId : possibleStates) {
+					List<Action> possibleActions = states.get(StateId).getPossibleActions(numberOfLanes, speedLimit,
+							withMisb);
 					Double localMaxQ = states.get(StateId).getMaxQValue(possibleActions);
-					if(localMaxQ > maxQ) {
+					if (localMaxQ > maxQ) {
 						maxQ = localMaxQ;
 						maxAction = states.get(StateId).getMaxQValueAction(possibleActions);
 					}
 				}
-				if(maxQ>0) {
-					System.out.println("#################SmartAction:" + maxAction + " " +maxQ);
+				if (maxQ > 0) {
+					System.out.println("#################SmartAction:" + maxAction + " " + maxQ);
 					return maxAction;
-				}else {
+				} else {
 					return predictNextAction(state);
 				}
 
-			}else {
+			} else {
 				return predictNextAction(state);
 			}
 		}
@@ -98,11 +99,19 @@ public class StatesList {
 		for (int i = 1; i <= numberOfLanes; i++) {
 			lanePossibleState = new State(state);
 			lanePossibleState.getMyCar().lane = i;
+
+			for (int j = 0; j < lanePossibleState.getAdjacentCars().size(); j++) {
+				if (lanePossibleState.getAdjacentCars().get(j).lane + i < 1
+						|| lanePossibleState.getAdjacentCars().get(j).lane + i > numberOfLanes) {
+					lanePossibleState.getAdjacentCars().remove(j);
+					j--;
+				}
+			}
 			fullPossibleStatesIds.addAll(getPossibleStates(lanePossibleState));
 		}
 		return fullPossibleStatesIds;
 	}
-	
+
 	public List<String> getPossibleStates(State state) {
 		List<String> possibleStatesIds = new ArrayList<String>();
 		State possibleState;
@@ -110,7 +119,7 @@ public class StatesList {
 		if (states.containsKey(state.id)) {
 			possibleStatesIds.add(state.id);
 		}
-		
+
 		List<AgentCarState> possibleAgentCars = state.getMyCar().possibleAdj(numberOfLanes, speedLimit);
 		for (AgentCarState myCar : possibleAgentCars) {
 			possibleState = new State(state);
@@ -122,7 +131,7 @@ public class StatesList {
 		}
 
 		List<AdjacentCarState> possibleAdjCars;
-		for (int i = 0; i< state.getAdjacentCars().size();i++) {
+		for (int i = 0; i < state.getAdjacentCars().size(); i++) {
 			possibleAdjCars = state.getAdjacentCars().get(i).possibleAdj(numberOfLanes, speedLimit);
 			for (AdjacentCarState possibleCar : possibleAdjCars) {
 				possibleState = new State(state);
@@ -133,10 +142,10 @@ public class StatesList {
 				}
 			}
 		}
-		
-		if(state.getAdjacentCars().size()>1) {
+
+		if (state.getAdjacentCars().size() > 1) {
 			possibleState = new State(state);
-			for (int i = 0; i< state.getAdjacentCars().size();i++) {
+			for (int i = 0; i < state.getAdjacentCars().size(); i++) {
 				AdjacentCarState carState = state.getAdjacentCars().get(i);
 				carState.position++;
 				possibleState.getAdjacentCars().set(i, new AdjacentCarState(carState));
@@ -145,9 +154,9 @@ public class StatesList {
 			if (states.containsKey(possibleState.id)) {
 				possibleStatesIds.add(possibleState.id);
 			}
-			
+
 			possibleState = new State(state);
-			for (int i = 0; i< state.getAdjacentCars().size();i++) {
+			for (int i = 0; i < state.getAdjacentCars().size(); i++) {
 				AdjacentCarState carState = state.getAdjacentCars().get(i);
 				carState.position--;
 				possibleState.getAdjacentCars().set(i, new AdjacentCarState(carState));
@@ -156,8 +165,16 @@ public class StatesList {
 			if (states.containsKey(possibleState.id)) {
 				possibleStatesIds.add(possibleState.id);
 			}
-		}		
-		return possibleStatesIds;
+		}
+
+		List<String> actionableStates = new ArrayList<String>();
+		for (int i = 0; i < possibleStatesIds.size(); i++) {
+			if (states.get(possibleStatesIds.get(i)).getQValues().qList.size() > 0) {
+				actionableStates.add(possibleStatesIds.get(i));
+			}
+		}
+
+		return actionableStates;
 	}
 
 	public Action predictRandomNextAction(State state) {
@@ -169,15 +186,15 @@ public class StatesList {
 	public State setNextState(State currentState, State testState) {
 
 		if (states.containsKey(testState.getId())) {
-			if(!currentState.getRelatedStatesIds().contains(testState.getId())) {
+			if (!currentState.getRelatedStatesIds().contains(testState.getId())) {
 				currentState.getRelatedStatesIds().add(testState.getId());
 			}
-			if(!testState.getRelatedStatesIds().contains(currentState.getId())) {
+			if (!testState.getRelatedStatesIds().contains(currentState.getId())) {
 				testState.getRelatedStatesIds().add(currentState.getId());
 			}
 			return states.get(testState.getId());
 		}
-		
+
 		State nextState = new State(testState);
 		nextState.getRelatedStatesIds().add(currentState.getId());
 		states.put(nextState.getId(), nextState);
@@ -225,7 +242,5 @@ public class StatesList {
 	public void setWithMisb(boolean withMisb) {
 		this.withMisb = withMisb;
 	}
-	
-	
 
 }

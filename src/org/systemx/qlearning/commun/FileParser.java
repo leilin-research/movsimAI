@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.systemx.qlearning.state.Action;
-import org.systemx.qlearning.state.CarState;
+import org.systemx.qlearning.state.AdjacentCarState;
+import org.systemx.qlearning.state.AgentCarState;
 import org.systemx.qlearning.state.QValues;
 import org.systemx.qlearning.state.State;
 import org.systemx.qlearning.state.StatesList;
@@ -40,8 +41,8 @@ public class FileParser {
 
 		for (int i = 3; i < lines.size(); i++) {
 			QValues qValuesTemp = new QValues();
-			CarState myCarTemp = new CarState();
-			List<CarState> AdjacentCarsTemp = new ArrayList<CarState>();
+			AgentCarState myCarTemp = new AgentCarState();
+			List<AdjacentCarState> AdjacentCarsTemp = new ArrayList<AdjacentCarState>();
 			List<String> relatedStatesIds = new ArrayList<String>();
 			
 			List<String> splitList = Arrays.asList(lines.get(i).split(";"));
@@ -59,8 +60,69 @@ public class FileParser {
 			myCarTemp.parseValues(splitList.get(3));
 			
 			for (int j = 4; j < splitList.size(); j++) {
-				CarState carTemp = new CarState();
+				AdjacentCarState carTemp = new AdjacentCarState();
 				carTemp.parseValues(splitList.get(j));
+				AdjacentCarsTemp.add(carTemp);
+			}
+			
+			State stateTemp = new State(qValuesTemp, myCarTemp, AdjacentCarsTemp, relatedStatesIds);
+			stateList.addState(stateTemp.getId(),stateTemp);
+			progressBar.update(i);
+		}
+		System.out.println();
+		System.out.println("Parsing StatesList done! " + reli);
+		System.out.println();
+		
+		return stateList;
+	}
+	
+	public static StatesList parseFileOld(String path) throws IOException {
+		File file = new File(path);
+		List<String> lines = readFile(file);
+		System.out.println("Parsing StatesList:");
+
+		ProgressBar progressBar = new ProgressBar(lines.size(), "Parsing StatesList");
+		progressBar.setInverse(false);
+		
+		int numberOfLanes = Integer.parseInt(lines.get(0));
+		int speedLimit = Integer.parseInt(lines.get(1));
+		boolean withMisb = Boolean.parseBoolean(lines.get(2));
+		
+		StatesList stateList = new StatesList(numberOfLanes, speedLimit, withMisb);
+		
+		long reli = 0;
+
+		for (int i = 3; i < lines.size(); i++) {
+			QValues qValuesTemp = new QValues();
+			AgentCarState myCarTemp = new AgentCarState();
+			List<AdjacentCarState> AdjacentCarsTemp = new ArrayList<AdjacentCarState>();
+			List<String> relatedStatesIds = new ArrayList<String>();
+			
+			List<String> splitList = Arrays.asList(lines.get(i).split(";"));
+			
+			qValuesTemp.parseValues(splitList.get(1));
+			
+			if(!splitList.get(2).isEmpty()) {
+				String[] relatedStatesString = splitList.get(2).split("_");	
+				for (int j = 0; j < relatedStatesString.length; j++) {
+					reli++;
+					relatedStatesIds.add(relatedStatesString[j]);
+				}
+			}
+		
+			String[] parts = splitList.get(3).split(":");
+			
+			myCarTemp.parseValues(parts[0] + ":" + parts[2]);
+			
+			for (int j = 4; j < splitList.size(); j++) {
+				AdjacentCarState carTemp = new AdjacentCarState();
+				
+				parts = splitList.get(j).split(":");
+				String lane = "" + (Integer.parseInt(parts[0]) - myCarTemp.lane);
+				String position = parts[1];
+				String speed = parts[2];
+				
+				carTemp.parseValues(lane + ":" + position +":"+ speed);
 				AdjacentCarsTemp.add(carTemp);
 			}
 			

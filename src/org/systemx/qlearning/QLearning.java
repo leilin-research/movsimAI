@@ -14,8 +14,8 @@ public class QLearning {
 	public static final boolean loadFile = true;
 	
 	public static final int numberOfLanes = 3;
-	public static final int speedLimit = 20;
-	public static final boolean withMisb = true;
+	public static final int speedLimit = 100;
+	public static final boolean withMisb = false;
 	
 	private static boolean Initialized = false;
 	

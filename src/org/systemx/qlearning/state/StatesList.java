@@ -96,8 +96,8 @@ public class StatesList {
 		List<String> adjacentStatesIds = new ArrayList<String>();
 		State adjState;
 
-		List<CarState> possibleAdjCars = state.getMyCar().possibleAdj(numberOfLanes, speedLimit, true);
-		for (CarState myCar : possibleAdjCars) {
+		List<AgentCarState> possibleAgentCars = state.getMyCar().possibleAdj(numberOfLanes, speedLimit);
+		for (AgentCarState myCar : possibleAgentCars) {
 			adjState = new State(state);
 			adjState.setMyCar(myCar);
 			adjState.id = adjState.calculateId();
@@ -106,9 +106,10 @@ public class StatesList {
 			}
 		}
 
+		List<AdjacentCarState> possibleAdjCars;
 		for (int i = 0; i< state.getAdjacentCars().size();i++) {
-			possibleAdjCars = state.getAdjacentCars().get(i).possibleAdj(numberOfLanes, speedLimit, false);
-			for (CarState possibleCar : possibleAdjCars) {
+			possibleAdjCars = state.getAdjacentCars().get(i).possibleAdj(numberOfLanes, speedLimit);
+			for (AdjacentCarState possibleCar : possibleAdjCars) {
 				adjState = new State(state);
 				adjState.getAdjacentCars().set(i, possibleCar);
 				adjState.id = adjState.calculateId();
@@ -121,9 +122,9 @@ public class StatesList {
 		if(state.getAdjacentCars().size()>1) {
 			adjState = new State(state);
 			for (int i = 0; i< state.getAdjacentCars().size();i++) {
-				CarState carState = state.getAdjacentCars().get(i);
+				AdjacentCarState carState = state.getAdjacentCars().get(i);
 				carState.position++;
-				adjState.getAdjacentCars().set(i, new CarState(carState));
+				adjState.getAdjacentCars().set(i, new AdjacentCarState(carState));
 			}
 			adjState.id = adjState.calculateId();
 			if (states.containsKey(adjState.id)) {
@@ -132,9 +133,9 @@ public class StatesList {
 			
 			adjState = new State(state);
 			for (int i = 0; i< state.getAdjacentCars().size();i++) {
-				CarState carState = state.getAdjacentCars().get(i);
+				AdjacentCarState carState = state.getAdjacentCars().get(i);
 				carState.position--;
-				adjState.getAdjacentCars().set(i, new CarState(carState));
+				adjState.getAdjacentCars().set(i, new AdjacentCarState(carState));
 			}
 			adjState.id = adjState.calculateId();
 			if (states.containsKey(adjState.id)) {

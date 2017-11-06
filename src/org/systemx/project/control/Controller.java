@@ -8,7 +8,8 @@ import org.systemx.project.ProjectSensedVehicle;
 import org.systemx.project.ProjectVehicle;
 import org.systemx.qlearning.QLearning;
 import org.systemx.qlearning.state.Action;
-import org.systemx.qlearning.state.CarState;
+import org.systemx.qlearning.state.AdjacentCarState;
+import org.systemx.qlearning.state.AgentCarState;
 import org.systemx.qlearning.state.State;
 import fr.ifsttar.licit.simulator.agents.perception.representation.SensedVehicle;
 
@@ -121,18 +122,18 @@ public class Controller {
 	}
 
 	private static State getCurrentState(ProjectVehicle vehicle) {
-		CarState myCar = new CarState(vehicle.getLane(), 0, (int) vehicle.getSpeed());
+		AgentCarState myCar = new AgentCarState(vehicle.getLane(), (int) vehicle.getSpeed());
 		
-		List<CarState> adjacentCars = new ArrayList<CarState>();
+		List<AdjacentCarState> adjacentCars = new ArrayList<AdjacentCarState>();
 		
 		List<Long> ids = new ArrayList<>(vehicle.getCommunicatingVehicles().keySet());
 		for (int i = 0; i < ids.size(); i++) {
 			SensedVehicle sv = vehicle.getCommunicatingVehicles().get(ids.get(i));
 			if (sv instanceof ProjectSensedVehicle) {
-				int lane = ((ProjectSensedVehicle) sv).getSenderLane();
+				int lane = ((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane();
 				int position = (int) (((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition());
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
-				adjacentCars.add(new CarState(lane, position, speed));
+				adjacentCars.add(new AdjacentCarState(lane, position, speed));
 			}
 		}
 

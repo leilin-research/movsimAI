@@ -11,15 +11,20 @@ public class QLearning {
 	private static final double alpha = 0.1; // Learning rate
 	private static final double gamma = 0.9; // Eagerness - 0 looks in the near future, 1 looks in the distant future
 
-	public static final boolean loadFile = true;
+	public static final boolean loadFile = false;
 	
 	public static final int numberOfLanes = 3;
-	public static final int speedLimit = 100;
+	public static final int speedLimit = 100; //meters/s
+	public static final double range = 20; // meters
 	public static final boolean withMisb = false;
+
 	
-	public static final boolean withAlea = true;
-	public static final double aleaFactor = 0.0005;
 	
+	public static final boolean withAleaSpeedAndLane = false;
+	public static final boolean withAleaLane = true;
+	public static final double aleaFactor = 0.0001;
+	
+
 	private static boolean Initialized = false;
 	
 	private static StatesList statesList;

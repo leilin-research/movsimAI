@@ -59,7 +59,7 @@ public class StatesList {
 
 	public Action predictNextAction(State state) {
 		List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit, withMisb);
-		ExpBetaSelector selector = new ExpBetaSelector(1);
+		ExpBetaSelector selector = new ExpBetaSelector(0.1);
 		return selector.getExpBetaSelectedAction(state, possibleActions);
 	}
 
@@ -68,12 +68,14 @@ public class StatesList {
 			return predictNextAction(state);
 		} else {
 			List<String> possibleStates = getFullPossibleStates(state);
+			List<Action> possibleActions = state.getPossibleActions(numberOfLanes, speedLimit,
+					withMisb);
+			
 			if (possibleStates.size() > 0) {
 				Action maxAction = null;
 				Double maxQ = -Double.MAX_VALUE;
 				for (String StateId : possibleStates) {
-					List<Action> possibleActions = states.get(StateId).getPossibleActions(numberOfLanes, speedLimit,
-							withMisb);
+
 					Double localMaxQ = states.get(StateId).getMaxQValue(possibleActions);
 					if (localMaxQ > maxQ) {
 						maxQ = localMaxQ;

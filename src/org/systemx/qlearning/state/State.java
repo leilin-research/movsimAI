@@ -186,7 +186,7 @@ public class State {
 	}
 
 	String calculateId() {
-		String s = "" + myCar.lane + myCar.speed;
+		String s = "" + myCar.lane +":"+ myCar.speed;
 
 		Collections.sort(adjacentCars, new Comparator<AdjacentCarState>() {
 			public int compare(AdjacentCarState c1, AdjacentCarState c2) {
@@ -214,7 +214,8 @@ public class State {
 		});
 
 		for (int i = 0; i < adjacentCars.size(); i++) {
-			s = s + adjacentCars.get(i).lane + adjacentCars.get(i).position + adjacentCars.get(i).speed;
+			s = s + "_";
+			s = s + adjacentCars.get(i).lane +":"+ adjacentCars.get(i).position +":"+ adjacentCars.get(i).speed;
 		}
 		return s;
 	}

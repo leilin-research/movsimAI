@@ -83,7 +83,7 @@ public class Controller {
 				if (id == vcid) {
 					if (Math.abs(((ProjectSensedVehicle) sv).getSenderLane() - vehicle.getLane()) < 2) {
 						if (Math.abs(
-								((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition()) < 50) {
+								((ProjectSensedVehicle) sv).getSenderPosition() - vehicle.getFrontPosition()) < qLearning.range) {
 							vehicle.setColorObject(Color.white);
 						}
 					}
@@ -123,7 +123,7 @@ public class Controller {
 			vehicle.modifyDesiredSpeed(0.000000001, true, true);
 		} else {
 			vehicle.resetDesiredSpeed();
-			if (qLearning.withAlea) {
+			if (qLearning.withAleaSpeedAndLane) {
 				Random rand = new Random();
 				double randon = rand.nextDouble() / qLearning.aleaFactor;
 				int randInt = (int) randon;
@@ -132,7 +132,8 @@ public class Controller {
 					randon = rand.nextInt(10);
 					randInt = (int) randon;
 					switch (randInt) {
-					case 0:case 1:
+					case 0:
+					case 1:
 						vehicle.scenarioSpeedVehicles();
 						break;
 					case 2:
@@ -141,21 +142,41 @@ public class Controller {
 					}
 				} else {
 					switch (randInt) {
-					case 0:case 1:
+					case 0:
+					case 1:
 						vehicle.scenarioSlowVehicles();
 						break;
 					case 2:
 						vehicle.scenarioSlowVehiclesOnRight();
 						break;
-					case 3:case 4:case 5:case 6:
+					case 3:
+					case 4:
+					case 5:
+					case 6:
 						vehicle.scenarioSpeedVehicles();
 						break;
-					case 7:case 8:
+					case 7:
+					case 8:
 						vehicle.scenarioSpeedVehiclesOnleft();
 						break;
 					}
 				}
 			}
+
+			if (qLearning.withAleaLane) {
+				Random rand = new Random();
+				double randon = rand.nextDouble() / qLearning.aleaFactor;
+				int randInt = (int) randon;
+				switch (randInt) {
+				case 0:
+					vehicle.scenarioVehiclesOnleft();
+					break;
+				case 1:
+					vehicle.scenarioVehiclesOnRight();
+					break;
+				}
+			}
+
 		}
 
 	}
@@ -174,7 +195,7 @@ public class Controller {
 				int speed = (int) ((ProjectSensedVehicle) sv).getSenderSpeed();
 
 				if (Math.abs(lane) < 2) {
-					if (Math.abs(position) < 50) {
+					if (Math.abs(position) < qLearning.range) {
 						adjacentCars.add(new AdjacentCarState(lane, position, speed));
 					}
 				}

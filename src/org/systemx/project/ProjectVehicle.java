@@ -63,6 +63,14 @@ public class ProjectVehicle extends Vehicle {
 			modifyDesiredSpeed(+0.4);
 			modifiedDesiredLaneDiscretionary(BehaviorEnum.rightToleft);
 		}
+		
+		public void scenarioVehiclesOnRight(){
+			modifiedDesiredLaneDiscretionary(BehaviorEnum.leftToright);
+		}
+
+		public void scenarioVehiclesOnleft(){
+			modifiedDesiredLaneDiscretionary(BehaviorEnum.rightToleft);
+		}
 	/**
 	 * handles received messages
 	 * 
